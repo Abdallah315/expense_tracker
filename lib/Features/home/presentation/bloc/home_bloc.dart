@@ -26,6 +26,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
        super(const HomeState.initial()) {
     on<LoadHomeDataRequested>(_onLoadHomeDataRequested);
     on<LoadMoreExpensesRequested>(_onLoadMoreExpensesRequested);
+    on<LoadFullExpensesRequested>(_onLoadFullExpensesRequested);
     on<FilterChangedEvent>(_onFilterChanged);
     on<LoadCurrenciesRequested>(_onLoadCurrenciesRequested);
     on<SaveExpenseRequested>(_onSaveExpenseRequested);
@@ -124,6 +125,37 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       emit(
         state.copyWith(
           expensesStatus: ExpensesStatus.loaded,
+          expensesError: e.toString(),
+        ),
+      );
+    }
+  }
+
+  Future<void> _onLoadFullExpensesRequested(
+    LoadFullExpensesRequested event,
+    Emitter<HomeState> emit,
+  ) async {
+    emit(state.copyWith(expensesStatus: ExpensesStatus.loading));
+
+    try {
+      final expenses = await _fetchExpenses.call(
+        page: 1,
+        pageSize: _pageSize, // Use full page size for expenses screen
+      );
+
+      emit(
+        state.copyWith(
+          expensesStatus: ExpensesStatus.loaded,
+          expenses: expenses,
+          currentPage: 1,
+          hasMoreExpenses: expenses.length == _pageSize,
+          expensesError: null,
+        ),
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(
+          expensesStatus: ExpensesStatus.error,
           expensesError: e.toString(),
         ),
       );

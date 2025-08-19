@@ -17,6 +17,10 @@ class LoadMoreExpensesRequested extends HomeEvent {
   const LoadMoreExpensesRequested();
 }
 
+class LoadFullExpensesRequested extends HomeEvent {
+  const LoadFullExpensesRequested();
+}
+
 class FilterChangedEvent extends HomeEvent {
   final DateFilter filter;
 
