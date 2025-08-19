@@ -5,7 +5,6 @@ import 'package:inovola_task/core/helpers/extensions.dart';
 import 'package:inovola_task/core/helpers/sizes.dart';
 import 'package:inovola_task/core/theming/colors.dart';
 import 'package:inovola_task/core/theming/styles.dart';
-import 'package:intl/intl.dart' as intl;
 
 class ExpenseTileWidget extends StatelessWidget {
   final ExpenseEntity expense;

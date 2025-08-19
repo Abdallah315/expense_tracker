@@ -14,15 +14,30 @@ class TextStyles {
     fontWeight: FontWeightHelper.medium,
     color: ColorsManager.black,
   );
+  static TextStyle font14RegularWhite = TextStyle(
+    fontSize: 14.sp,
+    fontWeight: FontWeightHelper.regular,
+    color: ColorsManager.white,
+  );
   static TextStyle font14RegularBlack = TextStyle(
     fontSize: 14.sp,
     fontWeight: FontWeightHelper.regular,
     color: ColorsManager.black,
   );
+  static TextStyle font14RegularGray = TextStyle(
+    fontSize: 14.sp,
+    fontWeight: FontWeightHelper.regular,
+    color: ColorsManager.gray,
+  );
   static TextStyle font12RegularGray = TextStyle(
     fontSize: 12.sp,
     fontWeight: FontWeightHelper.regular,
     color: ColorsManager.gray,
+  );
+  static TextStyle font14RegularLightGray = TextStyle(
+    fontSize: 14.sp,
+    fontWeight: FontWeightHelper.regular,
+    color: ColorsManager.mediumGray,
   );
   static TextStyle font28BoldWhite = TextStyle(
     fontSize: 28.sp,
