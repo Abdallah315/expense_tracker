@@ -111,13 +111,21 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         filter: state.currentFilter,
       );
 
-      final updatedExpenses = [...state.expenses!, ...moreExpenses];
+      // Prevent duplicates by filtering out expenses that already exist
+      final existingExpenseIds = state.expenses!.map((e) => e.id).toSet();
+      final newExpenses = moreExpenses
+          .where((expense) => !existingExpenseIds.contains(expense.id))
+          .toList();
+
+      final updatedExpenses = [...state.expenses!, ...newExpenses];
 
       emit(
         state.copyWith(
           expensesStatus: ExpensesStatus.loaded,
           expenses: updatedExpenses,
           currentPage: currentPage,
+          // Has more expenses only if we got exactly the page size requested
+          // If we got less than pageSize, we've reached the end
           hasMoreExpenses: moreExpenses.length == _pageSize,
         ),
       );
