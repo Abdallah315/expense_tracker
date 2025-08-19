@@ -3,6 +3,7 @@ import 'package:inovola_task/Features/home/data/models/expense_isar.dart';
 import 'package:inovola_task/Features/home/data/models/expenses_summary_isar.dart';
 import 'package:inovola_task/Features/home/domain/entities/expenses_summay_entity.dart';
 import 'package:inovola_task/core/database/app_database.dart';
+import 'package:isar/isar.dart';
 
 abstract class HomeLocalDataSource {
   Future<ExpensesSummaryEntity?> fetchExpensesSummary();
@@ -45,9 +46,13 @@ class HomeLocalDataSourceImpl extends HomeLocalDataSource {
     int offset = 0,
     int limit = 10,
   }) async {
-    // For now, return empty list - pagination will be handled by remote data source
-    // In a real app, you'd implement proper Isar query with pagination
-    return [];
+    final isar = await AppDatabase.isar;
+    final expenses = await isar.expenseIsars
+        .where()
+        .offset(offset)
+        .limit(limit)
+        .findAll();
+    return expenses;
   }
 
   @override

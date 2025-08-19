@@ -24,6 +24,9 @@ class ExpensesListWidget extends StatelessWidget {
 
           case ExpensesStatus.loaded:
             final expenses = state.expenses!;
+            if (expenses.isEmpty) {
+              return const Center(child: Text('No expenses found'));
+            }
             return Column(
               children: [
                 ...expenses.map(

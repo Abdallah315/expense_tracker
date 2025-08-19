@@ -5,7 +5,7 @@ part 'expenses_summary_isar.g.dart';
 
 @collection
 class ExpensesSummaryIsar {
-  Id id = 0; // singleton cache row
+  Id id = 0;
 
   late double totalBalance;
   late double totalExpenses;

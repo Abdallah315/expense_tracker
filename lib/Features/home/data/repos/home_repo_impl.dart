@@ -39,16 +39,13 @@ class HomeRepoImpl implements HomeRepo {
     int pageSize = 10,
   }) async {
     try {
-      // Simple remote-first approach for now
       final remoteExpenses = await homeRemoteDataSource.fetchExpenses(
         page: page,
         pageSize: pageSize,
       );
 
-      // Cache the results
       await homeLocalDataSource.saveExpenses(remoteExpenses);
 
-      // Convert models to entities
       return remoteExpenses.map((model) => model.toEntity()).toList();
     } catch (e) {
       throw ServerFailure(e.toString());
