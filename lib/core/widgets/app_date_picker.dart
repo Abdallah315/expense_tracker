@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:inovola_task/core/helpers/extensions.dart';
 import 'package:inovola_task/core/theming/colors.dart';
 import 'package:inovola_task/core/theming/styles.dart';
 import 'package:intl/intl.dart';
@@ -73,7 +74,7 @@ class _AppDatePickerState extends State<AppDatePicker> {
 
   String get _formattedDate {
     if (selectedDate == null) return widget.hintText;
-    return DateFormat('dd MMM yyyy').format(selectedDate!);
+    return selectedDate!.formattedDateWithoutTime;
   }
 
   @override
@@ -98,11 +99,7 @@ class _AppDatePickerState extends State<AppDatePicker> {
                     : TextStyles.font14RegularBlack,
               ),
             ),
-            Icon(
-              Icons.calendar_today,
-              color: ColorsManager.mediumGray,
-              size: 20.sp,
-            ),
+            Icon(Icons.calendar_today, color: ColorsManager.black, size: 20.sp),
           ],
         ),
       ),

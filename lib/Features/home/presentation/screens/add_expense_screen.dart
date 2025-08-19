@@ -1,9 +1,11 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:inovola_task/core/helpers/enums.dart';
 import 'package:inovola_task/core/theming/colors.dart';
 import 'package:inovola_task/core/theming/styles.dart';
 import 'package:inovola_task/core/widgets/app_text_form_field.dart';
 import 'package:inovola_task/core/widgets/app_date_picker.dart';
+import 'package:inovola_task/core/widgets/app_upload_options.dart';
 
 class AddExpenseScreen extends StatelessWidget {
   const AddExpenseScreen({super.key});
@@ -66,13 +68,15 @@ class AddExpenseScreen extends StatelessWidget {
             const SizedBox(height: 16),
             Text('Attach Receipt', style: TextStyles.font16MediumBlack),
             const SizedBox(height: 8),
-            OutlinedButton.icon(
-              onPressed: () {},
-              icon: const Icon(Icons.camera_alt),
-              label: const Text('Upload image'),
-              style: OutlinedButton.styleFrom(
-                minimumSize: const Size.fromHeight(48),
-              ),
+            AppUploadOptions(
+              onImageUpload: (File imageFile) {
+                // Handle image upload from gallery/camera
+                print('Image selected: ${imageFile.path}');
+              },
+              onFileUpload: (File file) {
+                // Handle file upload
+                print('File selected: ${file.path}');
+              },
             ),
             const SizedBox(height: 24),
             Text('Categories', style: TextStyles.font16MediumBlack),
