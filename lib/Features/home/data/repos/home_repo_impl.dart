@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:inovola_task/Features/home/data/data_sources/home_local_data_source.dart';
 import 'package:inovola_task/Features/home/data/data_sources/home_remote_data_source.dart';
 import 'package:inovola_task/Features/home/data/models/expense.dart';
@@ -40,6 +42,11 @@ class HomeRepoImpl implements HomeRepo {
     int pageSize = 10,
   }) async {
     try {
+      final cachedExpenses = await homeLocalDataSource.fetchExpenses();
+      if (cachedExpenses.isNotEmpty) {
+        log('cachedExpenses: $cachedExpenses');
+        return cachedExpenses.map((model) => model.toEntity()).toList();
+      }
       final remoteExpenses = await homeRemoteDataSource.fetchExpenses(
         page: page,
         pageSize: pageSize,

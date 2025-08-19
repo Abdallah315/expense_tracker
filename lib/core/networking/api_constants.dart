@@ -1,5 +1,5 @@
 class ApiConstants {
-  static const String apiBaseUrl = "appBaseUrl";
+  static const String apiBaseUrl = "";
   static const String expensesSummary = "expenses-summary";
   static const String expenses = "expenses";
   static String exchangeRates(String base) =>

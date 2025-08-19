@@ -37,7 +37,7 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
   Future<List<Expense>> fetchExpenses({int page = 1, int pageSize = 10}) async {
     if (kUseFakeApi) {
       await Future<void>.delayed(const Duration(seconds: 2));
-      return getExpenses(page: page, pageSize: pageSize);
+      return [];
     } else {
       final response = await apiService.get(endpoint: ApiConstants.expenses);
       final expenses = (response.data as List)
