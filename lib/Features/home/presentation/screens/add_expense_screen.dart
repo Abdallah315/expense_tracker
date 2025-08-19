@@ -1,16 +1,19 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:inovola_task/Features/home/presentation/bloc/home_bloc.dart';
+import 'package:inovola_task/Features/home/presentation/bloc/home_event.dart';
+import 'package:inovola_task/Features/home/presentation/widgets/categories_drop_down_widget.dart';
+import 'package:inovola_task/Features/home/presentation/widgets/categories_icon_widget.dart';
+import 'package:inovola_task/Features/home/presentation/widgets/currency_drop_down.dart';
 import 'package:inovola_task/core/di/dependency_injection.dart';
-import 'package:inovola_task/core/helpers/enums.dart';
+import 'package:inovola_task/core/helpers/sizes.dart';
 import 'package:inovola_task/core/theming/colors.dart';
 import 'package:inovola_task/core/theming/styles.dart';
 import 'package:inovola_task/core/widgets/app_text_form_field.dart';
 import 'package:inovola_task/core/widgets/app_date_picker.dart';
 import 'package:inovola_task/core/widgets/app_upload_options.dart';
-import 'package:inovola_task/Features/home/presentation/bloc/home_bloc.dart';
-import 'package:inovola_task/Features/home/presentation/bloc/home_event.dart';
-import 'package:inovola_task/Features/home/presentation/bloc/home_state.dart';
+import 'package:inovola_task/core/helpers/icon_helper.dart';
 
 class AddExpenseScreen extends StatefulWidget {
   const AddExpenseScreen({super.key});
@@ -20,20 +23,28 @@ class AddExpenseScreen extends StatefulWidget {
 }
 
 class _AddExpenseScreenState extends State<AddExpenseScreen> {
-  late HomeBloc _homeBloc;
+  late TextEditingController amountController;
+  late HomeBloc homeBloc;
 
   @override
   void initState() {
     super.initState();
-    _homeBloc = getIt<HomeBloc>();
-    // Load currencies when screen initializes
-    _homeBloc.add(const LoadCurrenciesRequested());
+    amountController = TextEditingController();
+    homeBloc = getIt<HomeBloc>();
+    homeBloc.add(const LoadCurrenciesRequested());
   }
+
+  File? imageFile;
+  File? file;
+  String? category;
+  String? currency;
+  DateTime? date;
+  CategoryIconData? selectedIconData;
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider.value(
-      value: _homeBloc,
+    return BlocProvider<HomeBloc>.value(
+      value: homeBloc,
       child: Scaffold(
         appBar: AppBar(title: const Text('Add Expense'), centerTitle: true),
         backgroundColor: ColorsManager.white,
@@ -43,101 +54,81 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text('Categories', style: TextStyles.font16MediumBlack),
-              const SizedBox(height: 8),
-              DropdownButtonFormField<String>(
-                initialValue: CategoriesEnum.shopping.name,
-                items: [
-                  ...CategoriesEnum.values.map(
-                    (category) => DropdownMenuItem(
-                      value: category.name,
-                      child: Text(
-                        category.name,
-                        style: TextStyles.font14RegularGray,
-                      ),
-                    ),
-                  ),
-                ],
-                onChanged: (_) {},
-                decoration: InputDecoration(
-                  fillColor: ColorsManager.textFieldBackground,
-                  filled: true,
-                  border: OutlineInputBorder(borderSide: BorderSide.none),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide.none,
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide.none,
-                  ),
-                  suffixIcon: const Icon(Icons.keyboard_arrow_down_sharp),
-                ),
-                dropdownColor: ColorsManager.textFieldBackground,
+              verticalSpace(8),
+              CategoriesDropDownWidget(
+                onCategorySelected: (category) {
+                  setState(() {
+                    this.category = category;
+                  });
+                },
               ),
-              const SizedBox(height: 16),
+              verticalSpace(16),
               Text('Amount', style: TextStyles.font16MediumBlack),
-              const SizedBox(height: 8),
+              verticalSpace(8),
               AppTextFormField(
+                controller: amountController,
                 hintText: '0',
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Amount is required';
                   }
+                  if (double.tryParse(value) == null) {
+                    return 'Amount must be a number';
+                  }
                   return null;
                 },
               ),
-              const SizedBox(height: 16),
+              verticalSpace(16),
               Text('Currency', style: TextStyles.font16MediumBlack),
-              CurrencyDropdown(),
-              const SizedBox(height: 16),
+              CurrencyDropdown(
+                onCurrencySelected: (currency) {
+                  setState(() {
+                    this.currency = currency;
+                  });
+                },
+              ),
+              verticalSpace(16),
               Text('Date', style: TextStyles.font16MediumBlack),
-              const SizedBox(height: 8),
+              verticalSpace(8),
               AppDatePicker(
                 hintText: '02/01/24',
-                onDateSelected: (DateTime? date) {},
+                onDateSelected: (DateTime? date) {
+                  setState(() {
+                    this.date = date;
+                  });
+                },
               ),
-              const SizedBox(height: 16),
+              verticalSpace(16),
               Text('Attach Receipt', style: TextStyles.font16MediumBlack),
-              const SizedBox(height: 8),
+              verticalSpace(8),
               AppUploadOptions(
                 onImageUpload: (File imageFile) {
-                  // Handle image upload from gallery/camera
-                  print('Image selected: ${imageFile.path}');
+                  setState(() {
+                    this.imageFile = imageFile;
+                  });
                 },
                 onFileUpload: (File file) {
-                  // Handle file upload
-                  print('File selected: ${file.path}');
+                  setState(() {
+                    this.file = file;
+                  });
                 },
               ),
-              const SizedBox(height: 24),
+              verticalSpace(24),
               Text('Category icon', style: TextStyles.font16MediumBlack),
-              const SizedBox(height: 12),
-              GridView.builder(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 4,
-                  childAspectRatio: 1.5,
-                ),
-                physics: const NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                itemBuilder: (context, index) {
-                  final icon = getCategoriesIcons()[index];
-                  return GestureDetector(
-                    onTap: () {
-                      print(icon);
-                    },
-                    child: SizedBox(
-                      width: 40,
-                      height: 40,
-                      child: Center(child: icon),
-                    ),
-                  );
+              verticalSpace(12),
+              CategoriesIconWidget(
+                onIconSelected: (CategoryIconData iconData) {
+                  setState(() {
+                    selectedIconData = iconData;
+                  });
                 },
-                itemCount: getCategoriesIcons().length,
               ),
-              const SizedBox(height: 32),
+              verticalSpace(32),
               SizedBox(
                 width: double.infinity,
                 height: 52,
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: canSave() ? save : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: ColorsManager.primary,
                     shape: RoundedRectangleBorder(
@@ -156,108 +147,41 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
       ),
     );
   }
-}
 
-class CurrencyDropdown extends StatefulWidget {
-  const CurrencyDropdown({super.key});
+  bool canSave() {
+    return amountController.text.isNotEmpty &&
+        double.tryParse(amountController.text) != null &&
+        category != null &&
+        currency != null &&
+        date != null &&
+        selectedIconData != null;
+  }
 
-  @override
-  State<CurrencyDropdown> createState() => _CurrencyDropdownState();
-}
+  void save() {
+    if (!canSave()) return;
 
-class _CurrencyDropdownState extends State<CurrencyDropdown> {
-  String? selectedCurrency;
+    final amount = double.parse(amountController.text);
 
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<HomeBloc, HomeState>(
-      builder: (context, state) {
-        // Handle loading state
-        if (state.currenciesStatus == CurrenciesStatus.loading) {
-          return Container(
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-            decoration: BoxDecoration(
-              color: ColorsManager.textFieldBackground,
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Row(
-              children: [
-                Text(
-                  'Loading currencies...',
-                  style: TextStyles.font14RegularGray,
-                ),
-                Spacer(),
-                SizedBox(
-                  width: 16,
-                  height: 16,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: ColorsManager.primary,
-                  ),
-                ),
-              ],
-            ),
-          );
-        }
-
-        // Handle error state
-        if (state.currenciesStatus == CurrenciesStatus.error) {
-          return Container(
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-            decoration: BoxDecoration(
-              color: ColorsManager.textFieldBackground,
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Text(
-              state.currenciesError ?? 'Error loading currencies',
-              style: TextStyles.font14RegularGray,
-            ),
-          );
-        }
-
-        // Handle loaded state
-        if (state.currenciesStatus == CurrenciesStatus.loaded &&
-            state.currencies != null) {
-          final currencies = state.currencies!.rates.keys.toList();
-
-          return DropdownButtonFormField<String>(
-            initialValue: selectedCurrency,
-            hint: Text('Select Currency', style: TextStyles.font14RegularGray),
-            items: currencies
-                .map(
-                  (currency) => DropdownMenuItem(
-                    value: currency,
-                    child: Text(currency, style: TextStyles.font14RegularBlack),
-                  ),
-                )
-                .toList(),
-            onChanged: (value) {
-              setState(() {
-                selectedCurrency = value;
-              });
-            },
-            decoration: InputDecoration(
-              fillColor: ColorsManager.textFieldBackground,
-              filled: true,
-              border: OutlineInputBorder(borderSide: BorderSide.none),
-              focusedBorder: OutlineInputBorder(borderSide: BorderSide.none),
-              enabledBorder: OutlineInputBorder(borderSide: BorderSide.none),
-              suffixIcon: const Icon(Icons.keyboard_arrow_down_sharp),
-            ),
-            dropdownColor: ColorsManager.textFieldBackground,
-          );
-        }
-
-        // Default/initial state
-        return Container(
-          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-          decoration: BoxDecoration(
-            color: ColorsManager.textFieldBackground,
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Text('Select Currency', style: TextStyles.font14RegularGray),
-        );
-      },
+    // Dispatch save event to BLoC
+    context.read<HomeBloc>().add(
+      SaveExpenseRequested(
+        iconData: selectedIconData!,
+        category: category!,
+        amount: amount,
+        currency: currency!,
+        date: date!,
+      ),
     );
+
+    // Show success message and navigate back
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Expense saved successfully!'),
+        backgroundColor: Colors.green,
+      ),
+    );
+
+    // Navigate back to home screen
+    Navigator.of(context).pop();
   }
 }

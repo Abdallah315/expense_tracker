@@ -6,4 +6,5 @@ abstract class HomeRepo {
   Future<ExpensesSummaryEntity> fetchExpensesSummary();
   Future<List<ExpenseEntity>> fetchExpenses({int page = 1, int pageSize = 10});
   Future<ExchangeRatesEntity> fetchExchangeRates();
+  Future<void> saveExpense(ExpenseEntity expense);
 }

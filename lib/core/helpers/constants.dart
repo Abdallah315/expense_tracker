@@ -1,5 +1,6 @@
 import 'package:inovola_task/Features/home/data/models/expense.dart';
 import 'package:inovola_task/core/helpers/enums.dart';
+import 'package:inovola_task/core/helpers/icon_helper.dart';
 
 const kExpensesSummaryBox = 'expenses_summary_box';
 const bool kUseFakeApi = true;
@@ -33,6 +34,7 @@ List<Expense> getExpenses({int page = 1, int pageSize = 10}) {
     return Expense(
       id: id,
       type: 'Expense $id',
+      iconData: CategoryIconHelper.getIconForCategory(category),
       category: category,
       amount: amount,
       currency: currency,

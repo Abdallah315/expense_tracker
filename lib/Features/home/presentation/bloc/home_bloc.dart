@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:inovola_task/Features/home/domain/usecases/fetch_expenses_summary.dart';
 import 'package:inovola_task/Features/home/domain/usecases/fetch_expenses.dart';
 import 'package:inovola_task/Features/home/domain/usecases/fetch_currencies.dart';
+import 'package:inovola_task/Features/home/domain/usecases/save_expense.dart';
 import 'home_event.dart';
 import 'home_state.dart';
 
@@ -9,6 +10,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final FetchExpensesSummary _fetchExpensesSummary;
   final FetchExpenses _fetchExpenses;
   final FetchCurrencies _fetchCurrencies;
+  final SaveExpense _saveExpense;
 
   static const int _pageSize = 10;
 
@@ -16,14 +18,17 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     required FetchExpensesSummary fetchExpensesSummary,
     required FetchExpenses fetchExpenses,
     required FetchCurrencies fetchCurrencies,
+    required SaveExpense saveExpense,
   }) : _fetchExpensesSummary = fetchExpensesSummary,
        _fetchExpenses = fetchExpenses,
        _fetchCurrencies = fetchCurrencies,
+       _saveExpense = saveExpense,
        super(const HomeState.initial()) {
     on<LoadHomeDataRequested>(_onLoadHomeDataRequested);
     on<LoadMoreExpensesRequested>(_onLoadMoreExpensesRequested);
     on<FilterChangedEvent>(_onFilterChanged);
     on<LoadCurrenciesRequested>(_onLoadCurrenciesRequested);
+    on<SaveExpenseRequested>(_onSaveExpenseRequested);
   }
 
   Future<void> _onLoadHomeDataRequested(
@@ -185,6 +190,37 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         state.copyWith(
           currenciesStatus: CurrenciesStatus.error,
           currenciesError: e.toString(),
+        ),
+      );
+    }
+  }
+
+  Future<void> _onSaveExpenseRequested(
+    SaveExpenseRequested event,
+    Emitter<HomeState> emit,
+  ) async {
+    print('💾 Saving expense...');
+    emit(state.copyWith(expensesStatus: ExpensesStatus.loading));
+
+    try {
+      await _saveExpense.call(
+        iconData: event.iconData,
+        category: event.category,
+        amount: event.amount,
+        currency: event.currency,
+        date: event.date,
+      );
+
+      print('✅ Expense saved successfully!');
+
+      // Refresh expenses list after saving
+      add(const LoadHomeDataRequested());
+    } catch (e) {
+      print('❌ Failed to save expense: $e');
+      emit(
+        state.copyWith(
+          expensesStatus: ExpensesStatus.error,
+          expensesError: e.toString(),
         ),
       );
     }

@@ -3,7 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:inovola_task/core/helpers/extensions.dart';
 import 'package:inovola_task/core/theming/colors.dart';
 import 'package:inovola_task/core/theming/styles.dart';
-import 'package:intl/intl.dart';
 
 class AppDatePicker extends StatefulWidget {
   final DateTime? initialDate;

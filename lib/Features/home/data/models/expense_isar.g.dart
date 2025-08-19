@@ -48,8 +48,13 @@ const ExpenseIsarSchema = CollectionSchema(
       name: r'exchangeRate',
       type: IsarType.double,
     ),
-    r'type': PropertySchema(
+    r'iconDataJson': PropertySchema(
       id: 6,
+      name: r'iconDataJson',
+      type: IsarType.string,
+    ),
+    r'type': PropertySchema(
+      id: 7,
       name: r'type',
       type: IsarType.string,
     )
@@ -75,6 +80,7 @@ int _expenseIsarEstimateSize(
 ) {
   var bytesCount = offsets.last;
   bytesCount += 3 + object.currency.length * 3;
+  bytesCount += 3 + object.iconDataJson.length * 3;
   bytesCount += 3 + object.type.length * 3;
   return bytesCount;
 }
@@ -91,7 +97,8 @@ void _expenseIsarSerialize(
   writer.writeString(offsets[3], object.currency);
   writer.writeDateTime(offsets[4], object.date);
   writer.writeDouble(offsets[5], object.exchangeRate);
-  writer.writeString(offsets[6], object.type);
+  writer.writeString(offsets[6], object.iconDataJson);
+  writer.writeString(offsets[7], object.type);
 }
 
 ExpenseIsar _expenseIsarDeserialize(
@@ -109,8 +116,9 @@ ExpenseIsar _expenseIsarDeserialize(
   object.currency = reader.readString(offsets[3]);
   object.date = reader.readDateTime(offsets[4]);
   object.exchangeRate = reader.readDouble(offsets[5]);
+  object.iconDataJson = reader.readString(offsets[6]);
   object.id = id;
-  object.type = reader.readString(offsets[6]);
+  object.type = reader.readString(offsets[7]);
   return object;
 }
 
@@ -135,6 +143,8 @@ P _expenseIsarDeserializeProp<P>(
     case 5:
       return (reader.readDouble(offset)) as P;
     case 6:
+      return (reader.readString(offset)) as P;
+    case 7:
       return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -693,6 +703,142 @@ extension ExpenseIsarQueryFilter
     });
   }
 
+  QueryBuilder<ExpenseIsar, ExpenseIsar, QAfterFilterCondition>
+      iconDataJsonEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'iconDataJson',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<ExpenseIsar, ExpenseIsar, QAfterFilterCondition>
+      iconDataJsonGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'iconDataJson',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<ExpenseIsar, ExpenseIsar, QAfterFilterCondition>
+      iconDataJsonLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'iconDataJson',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<ExpenseIsar, ExpenseIsar, QAfterFilterCondition>
+      iconDataJsonBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'iconDataJson',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<ExpenseIsar, ExpenseIsar, QAfterFilterCondition>
+      iconDataJsonStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'iconDataJson',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<ExpenseIsar, ExpenseIsar, QAfterFilterCondition>
+      iconDataJsonEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'iconDataJson',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<ExpenseIsar, ExpenseIsar, QAfterFilterCondition>
+      iconDataJsonContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'iconDataJson',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<ExpenseIsar, ExpenseIsar, QAfterFilterCondition>
+      iconDataJsonMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'iconDataJson',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<ExpenseIsar, ExpenseIsar, QAfterFilterCondition>
+      iconDataJsonIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'iconDataJson',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<ExpenseIsar, ExpenseIsar, QAfterFilterCondition>
+      iconDataJsonIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'iconDataJson',
+        value: '',
+      ));
+    });
+  }
+
   QueryBuilder<ExpenseIsar, ExpenseIsar, QAfterFilterCondition> idEqualTo(
       Id value) {
     return QueryBuilder.apply(this, (query) {
@@ -959,6 +1105,19 @@ extension ExpenseIsarQuerySortBy
     });
   }
 
+  QueryBuilder<ExpenseIsar, ExpenseIsar, QAfterSortBy> sortByIconDataJson() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'iconDataJson', Sort.asc);
+    });
+  }
+
+  QueryBuilder<ExpenseIsar, ExpenseIsar, QAfterSortBy>
+      sortByIconDataJsonDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'iconDataJson', Sort.desc);
+    });
+  }
+
   QueryBuilder<ExpenseIsar, ExpenseIsar, QAfterSortBy> sortByType() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'type', Sort.asc);
@@ -1047,6 +1206,19 @@ extension ExpenseIsarQuerySortThenBy
     });
   }
 
+  QueryBuilder<ExpenseIsar, ExpenseIsar, QAfterSortBy> thenByIconDataJson() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'iconDataJson', Sort.asc);
+    });
+  }
+
+  QueryBuilder<ExpenseIsar, ExpenseIsar, QAfterSortBy>
+      thenByIconDataJsonDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'iconDataJson', Sort.desc);
+    });
+  }
+
   QueryBuilder<ExpenseIsar, ExpenseIsar, QAfterSortBy> thenById() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.asc);
@@ -1111,6 +1283,13 @@ extension ExpenseIsarQueryWhereDistinct
     });
   }
 
+  QueryBuilder<ExpenseIsar, ExpenseIsar, QDistinct> distinctByIconDataJson(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'iconDataJson', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<ExpenseIsar, ExpenseIsar, QDistinct> distinctByType(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -1161,6 +1340,12 @@ extension ExpenseIsarQueryProperty
   QueryBuilder<ExpenseIsar, double, QQueryOperations> exchangeRateProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'exchangeRate');
+    });
+  }
+
+  QueryBuilder<ExpenseIsar, String, QQueryOperations> iconDataJsonProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'iconDataJson');
     });
   }
 

@@ -1,5 +1,6 @@
 import 'package:inovola_task/Features/home/data/data_sources/home_local_data_source.dart';
 import 'package:inovola_task/Features/home/data/data_sources/home_remote_data_source.dart';
+import 'package:inovola_task/Features/home/data/models/expense.dart';
 import 'package:inovola_task/Features/home/domain/entities/exchange_rates_entity.dart';
 import 'package:inovola_task/Features/home/domain/entities/expenses_summay_entity.dart';
 import 'package:inovola_task/Features/home/domain/entities/expense_entity.dart';
@@ -62,5 +63,10 @@ class HomeRepoImpl implements HomeRepo {
     } catch (e) {
       throw ServerFailure(e.toString());
     }
+  }
+
+  @override
+  Future<void> saveExpense(ExpenseEntity expense) async {
+    await homeLocalDataSource.saveExpense(Expense.fromEntity(expense));
   }
 }

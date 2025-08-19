@@ -7,6 +7,7 @@ import 'package:inovola_task/Features/home/domain/repos/home_repo.dart';
 import 'package:inovola_task/Features/home/domain/usecases/fetch_expenses_summary.dart';
 import 'package:inovola_task/Features/home/domain/usecases/fetch_expenses.dart';
 import 'package:inovola_task/Features/home/domain/usecases/fetch_currencies.dart';
+import 'package:inovola_task/Features/home/domain/usecases/save_expense.dart';
 import 'package:inovola_task/Features/home/presentation/bloc/home_bloc.dart';
 
 final getIt = GetIt.instance;
@@ -37,12 +38,16 @@ Future<void> setupGetIt() async {
   getIt.registerLazySingleton<FetchCurrencies>(
     () => FetchCurrencies(getIt<HomeRepo>()),
   );
+  getIt.registerLazySingleton<SaveExpense>(
+    () => SaveExpense(getIt<HomeRepo>()),
+  );
 
   getIt.registerFactory<HomeBloc>(
     () => HomeBloc(
       fetchExpensesSummary: getIt<FetchExpensesSummary>(),
       fetchExpenses: getIt<FetchExpenses>(),
       fetchCurrencies: getIt<FetchCurrencies>(),
+      saveExpense: getIt<SaveExpense>(),
     ),
   );
 }
