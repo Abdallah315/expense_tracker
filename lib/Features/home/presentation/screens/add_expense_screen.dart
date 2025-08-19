@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:inovola_task/Features/home/presentation/bloc/home_bloc.dart';
 import 'package:inovola_task/Features/home/presentation/bloc/home_event.dart';
 import 'package:inovola_task/Features/home/presentation/widgets/categories_drop_down_widget.dart';
@@ -37,7 +38,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   File? imageFile;
   File? file;
   String? category;
-  Map<String, int>? currency;
+  Map<String, num>? currency;
   DateTime? date;
   CategoryIconData? selectedIconData;
 
@@ -150,6 +151,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
 
     final amount = double.parse(amountController.text);
 
+    print(currency);
     homeBloc.add(
       SaveExpenseRequested(
         iconData: selectedIconData!,
@@ -167,6 +169,6 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
       ),
     );
 
-    Navigator.of(context).pop();
+    context.pop();
   }
 }

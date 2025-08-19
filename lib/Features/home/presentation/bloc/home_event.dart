@@ -34,7 +34,7 @@ class SaveExpenseRequested extends HomeEvent {
   final CategoryIconData iconData;
   final String category;
   final double amount;
-  final Map<String, int> currency;
+  final Map<String, num> currency;
   final DateTime date;
 
   const SaveExpenseRequested({

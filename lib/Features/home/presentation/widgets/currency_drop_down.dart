@@ -9,7 +9,7 @@ import 'package:inovola_task/core/widgets/loader.dart';
 
 class CurrencyDropdown extends StatefulWidget {
   const CurrencyDropdown({super.key, required this.onCurrencySelected});
-  final Function(Map<String, int>) onCurrencySelected;
+  final Function(Map<String, num>) onCurrencySelected;
   @override
   State<CurrencyDropdown> createState() => _CurrencyDropdownState();
 }
@@ -43,7 +43,7 @@ class _CurrencyDropdownState extends State<CurrencyDropdown> {
                 .toList(),
             onChanged: (val) {
               final exchangeRate = state.currencies!.rates[val];
-              widget.onCurrencySelected({val!: exchangeRate!.toInt()});
+              widget.onCurrencySelected({val!: exchangeRate!});
             },
             decoration: InputDecoration(
               fillColor: ColorsManager.textFieldBackground,

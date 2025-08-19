@@ -12,7 +12,7 @@ class SaveExpense {
     required CategoryIconData iconData,
     required String category,
     required double amount,
-    required Map<String, int> currency,
+    required Map<String, num> currency,
     required DateTime date,
   }) async {
     final categoryEnum = CategoriesEnum.values.firstWhere(
