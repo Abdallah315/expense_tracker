@@ -43,7 +43,7 @@ class ExpenseTileWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                '- ${expense.currency}${expense.amountInUSD}',
+                '- USD ${expense.amountInUSD.toStringAsFixed(2)}',
                 style: TextStyles.font16MediumBlack,
               ),
               Text(

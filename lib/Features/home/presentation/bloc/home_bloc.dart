@@ -199,7 +199,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     SaveExpenseRequested event,
     Emitter<HomeState> emit,
   ) async {
-    print('💾 Saving expense...');
     emit(state.copyWith(expensesStatus: ExpensesStatus.loading));
 
     try {
@@ -211,12 +210,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         date: event.date,
       );
 
-      print('✅ Expense saved successfully!');
-
-      // Refresh expenses list after saving
       add(const LoadHomeDataRequested());
     } catch (e) {
-      print('❌ Failed to save expense: $e');
       emit(
         state.copyWith(
           expensesStatus: ExpensesStatus.error,

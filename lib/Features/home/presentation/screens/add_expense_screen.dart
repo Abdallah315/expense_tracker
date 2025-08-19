@@ -81,7 +81,9 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
               Text('Currency', style: TextStyles.font16MediumBlack),
               CurrencyDropdown(
                 onCurrencySelected: (currency) {
-                  this.currency = currency;
+                  setState(() {
+                    this.currency = currency;
+                  });
                 },
               ),
               verticalSpace(16),
@@ -90,7 +92,9 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
               AppDatePicker(
                 hintText: '02/01/24',
                 onDateSelected: (DateTime? date) {
-                  this.date = date;
+                  setState(() {
+                    this.date = date;
+                  });
                 },
               ),
               verticalSpace(16),
@@ -98,10 +102,14 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
               verticalSpace(8),
               AppUploadOptions(
                 onImageUpload: (File imageFile) {
-                  this.imageFile = imageFile;
+                  setState(() {
+                    this.imageFile = imageFile;
+                  });
                 },
                 onFileUpload: (File file) {
-                  this.file = file;
+                  setState(() {
+                    this.file = file;
+                  });
                 },
               ),
               verticalSpace(24),
@@ -109,7 +117,9 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
               verticalSpace(12),
               CategoriesIconWidget(
                 onIconSelected: (CategoryIconData iconData) {
-                  selectedIconData = iconData;
+                  setState(() {
+                    selectedIconData = iconData;
+                  });
                 },
               ),
               verticalSpace(32),
@@ -151,7 +161,6 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
 
     final amount = double.parse(amountController.text);
 
-    print(currency);
     homeBloc.add(
       SaveExpenseRequested(
         iconData: selectedIconData!,
