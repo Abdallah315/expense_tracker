@@ -36,6 +36,7 @@ class ExpenseTracker extends StatelessWidget {
           scaffoldBackgroundColor: ColorsManager.background,
           floatingActionButtonTheme: FloatingActionButtonThemeData(
             backgroundColor: ColorsManager.primary,
+            foregroundColor: ColorsManager.white,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(50),
             ),

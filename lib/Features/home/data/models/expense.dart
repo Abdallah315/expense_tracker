@@ -8,7 +8,7 @@ import 'package:inovola_task/core/helpers/icon_helper.dart';
 class Expense {
   final int id;
   final String type;
-  final CategoryIconData iconData;
+  final CategoryIconData? iconData;
   final CategoriesEnum category;
   final double amount;
   final String currency;
@@ -19,7 +19,7 @@ class Expense {
   Expense({
     required this.id,
     required this.type,
-    required this.iconData,
+    this.iconData,
     required this.category,
     required this.amount,
     required this.currency,
@@ -56,7 +56,6 @@ class Expense {
     return <String, dynamic>{
       'id': id,
       'type': type,
-      'iconData': iconData.toJson(),
       'category': category.name,
       'amount': amount,
       'currency': currency,
@@ -70,9 +69,6 @@ class Expense {
     return Expense(
       id: map['id'] as int,
       type: map['type'] as String,
-      iconData: CategoryIconData.fromJson(
-        map['iconData'] as Map<String, dynamic>,
-      ),
       category: CategoriesEnum.values.firstWhere(
         (element) => element.name == map['category'] as String,
       ),
@@ -123,7 +119,9 @@ class Expense {
   ExpenseEntity toEntity() => ExpenseEntity(
     id: id,
     type: type,
-    iconData: iconData,
+    iconData:
+        iconData ??
+        CategoryIconData(iconCodePoint: 0, colorValue: 0, category: category),
     category: category,
     amount: amount,
     currency: currency,

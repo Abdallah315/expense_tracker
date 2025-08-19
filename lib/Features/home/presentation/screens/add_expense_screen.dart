@@ -37,7 +37,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   File? imageFile;
   File? file;
   String? category;
-  String? currency;
+  Map<String, int>? currency;
   DateTime? date;
   CategoryIconData? selectedIconData;
 
@@ -57,9 +57,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
               verticalSpace(8),
               CategoriesDropDownWidget(
                 onCategorySelected: (category) {
-                  setState(() {
-                    this.category = category;
-                  });
+                  this.category = category;
                 },
               ),
               verticalSpace(16),
@@ -82,9 +80,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
               Text('Currency', style: TextStyles.font16MediumBlack),
               CurrencyDropdown(
                 onCurrencySelected: (currency) {
-                  setState(() {
-                    this.currency = currency;
-                  });
+                  this.currency = currency;
                 },
               ),
               verticalSpace(16),
@@ -93,9 +89,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
               AppDatePicker(
                 hintText: '02/01/24',
                 onDateSelected: (DateTime? date) {
-                  setState(() {
-                    this.date = date;
-                  });
+                  this.date = date;
                 },
               ),
               verticalSpace(16),
@@ -103,14 +97,10 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
               verticalSpace(8),
               AppUploadOptions(
                 onImageUpload: (File imageFile) {
-                  setState(() {
-                    this.imageFile = imageFile;
-                  });
+                  this.imageFile = imageFile;
                 },
                 onFileUpload: (File file) {
-                  setState(() {
-                    this.file = file;
-                  });
+                  this.file = file;
                 },
               ),
               verticalSpace(24),
@@ -118,9 +108,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
               verticalSpace(12),
               CategoriesIconWidget(
                 onIconSelected: (CategoryIconData iconData) {
-                  setState(() {
-                    selectedIconData = iconData;
-                  });
+                  selectedIconData = iconData;
                 },
               ),
               verticalSpace(32),
@@ -162,8 +150,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
 
     final amount = double.parse(amountController.text);
 
-    // Dispatch save event to BLoC
-    context.read<HomeBloc>().add(
+    homeBloc.add(
       SaveExpenseRequested(
         iconData: selectedIconData!,
         category: category!,
@@ -173,7 +160,6 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
       ),
     );
 
-    // Show success message and navigate back
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Expense saved successfully!'),
@@ -181,7 +167,6 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
       ),
     );
 
-    // Navigate back to home screen
     Navigator.of(context).pop();
   }
 }
