@@ -8,7 +8,11 @@ class ApiService {
     final Map<String, dynamic>? queryParameters,
   }) async {
     try {
-      final dio = DioFactory.getDio();
+      // Determine if this is an external URL (starts with http/https)
+      final isExternal =
+          endpoint.startsWith('http://') || endpoint.startsWith('https://');
+      final dio = DioFactory.getDio(isExternal: isExternal);
+
       final response = await dio.get(
         endpoint,
         queryParameters: queryParameters,
@@ -28,7 +32,9 @@ class ApiService {
     final Map<String, dynamic>? queryParameters,
   }) async {
     try {
-      final dio = DioFactory.getDio();
+      final isExternal =
+          endpoint.startsWith('http://') || endpoint.startsWith('https://');
+      final dio = DioFactory.getDio(isExternal: isExternal);
 
       final response = await dio.post(
         endpoint,
@@ -49,7 +55,9 @@ class ApiService {
     final Map<String, dynamic>? queryParameters,
   }) async {
     try {
-      final dio = DioFactory.getDio();
+      final isExternal =
+          endpoint.startsWith('http://') || endpoint.startsWith('https://');
+      final dio = DioFactory.getDio(isExternal: isExternal);
 
       final response = await dio.put(
         endpoint,
@@ -69,7 +77,9 @@ class ApiService {
     final Map<String, dynamic>? queryParameters,
   }) async {
     try {
-      final dio = DioFactory.getDio();
+      final isExternal =
+          endpoint.startsWith('http://') || endpoint.startsWith('https://');
+      final dio = DioFactory.getDio(isExternal: isExternal);
 
       final response = await dio.delete(
         endpoint,

@@ -1,4 +1,4 @@
 class ExchangeRatesEntity {
-  final Map<String, double> rates;
+  final Map<String, num> rates;
   ExchangeRatesEntity({required this.rates});
 }

@@ -22,7 +22,9 @@ class HomeScreen extends StatelessWidget {
       child: Scaffold(
         backgroundColor: ColorsManager.background,
         floatingActionButton: FloatingActionButton(
-          onPressed: () => context.pushNamed(AppRoutes.addExpense.name),
+          onPressed: () {
+            context.pushNamed(AppRoutes.addExpense.name);
+          },
           child: const Icon(Icons.add),
         ),
         body: SingleChildScrollView(

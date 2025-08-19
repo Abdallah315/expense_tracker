@@ -5,17 +5,17 @@ import 'package:flutter/foundation.dart';
 import 'package:inovola_task/Features/home/domain/entities/exchange_rates_entity.dart';
 
 class ExchangeRates {
-  final String result;
-  final String provider;
-  final String documentation;
-  final String termsOfUse;
-  final int timeLastUpdateUnix;
-  final String timeLastUpdateUtc;
-  final int timeNextUpdateUnix;
-  final String timeNextUpdateUtc;
-  final int timeEolUnix;
-  final String baseCode;
-  final Map<String, double> rates;
+  final String? result;
+  final String? provider;
+  final String? documentation;
+  final String? termsOfUse;
+  final int? timeLastUpdateUnix;
+  final String? timeLastUpdateUtc;
+  final int? timeNextUpdateUnix;
+  final String? timeNextUpdateUtc;
+  final int? timeEolUnix;
+  final String? baseCode;
+  final Map<String, num>? rates;
   ExchangeRates({
     required this.result,
     required this.provider,
@@ -41,7 +41,7 @@ class ExchangeRates {
     String? timeNextUpdateUtc,
     int? timeEolUnix,
     String? baseCode,
-    Map<String, double>? rates,
+    Map<String, num>? rates,
   }) {
     return ExchangeRates(
       result: result ?? this.result,
@@ -76,17 +76,17 @@ class ExchangeRates {
 
   factory ExchangeRates.fromMap(Map<String, dynamic> map) {
     return ExchangeRates(
-      result: map['result'] as String,
-      provider: map['provider'] as String,
-      documentation: map['documentation'] as String,
-      termsOfUse: map['termsOfUse'] as String,
-      timeLastUpdateUnix: map['timeLastUpdateUnix'] as int,
-      timeLastUpdateUtc: map['timeLastUpdateUtc'] as String,
-      timeNextUpdateUnix: map['timeNextUpdateUnix'] as int,
-      timeNextUpdateUtc: map['timeNextUpdateUtc'] as String,
-      timeEolUnix: map['timeEolUnix'] as int,
-      baseCode: map['baseCode'] as String,
-      rates: Map<String, double>.from((map['rates'] as Map)),
+      result: map['result'] as String?,
+      provider: map['provider'] as String?,
+      documentation: map['documentation'] as String?,
+      termsOfUse: map['terms_of_use'] as String?,
+      timeLastUpdateUnix: map['time_last_update_unix'] as int?,
+      timeLastUpdateUtc: map['time_last_update_utc'] as String?,
+      timeNextUpdateUnix: map['time_next_update_unix'] as int?,
+      timeNextUpdateUtc: map['time_next_update_utc'] as String?,
+      timeEolUnix: map['time_eol_unix'] as int?,
+      baseCode: map['base_code'] as String?,
+      rates: Map<String, num>.from((map['rates'] as Map?) ?? {}),
     );
   }
 
@@ -133,6 +133,6 @@ class ExchangeRates {
   }
 
   ExchangeRatesEntity toEntity() {
-    return ExchangeRatesEntity(rates: rates);
+    return ExchangeRatesEntity(rates: rates ?? {});
   }
 }

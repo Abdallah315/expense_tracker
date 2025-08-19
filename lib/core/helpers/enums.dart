@@ -59,3 +59,40 @@ final Map<CategoriesEnum, CircleAvatar> categoriesIcons = {
     child: Icon(Icons.more_horiz, color: ColorsManager.brown),
   ),
 };
+
+List<CircleAvatar> getCategoriesIcons() {
+  return [
+    CircleAvatar(
+      backgroundColor: ColorsManager.primary.withValues(alpha: 0.1),
+      child: Icon(Icons.local_grocery_store, color: ColorsManager.primary),
+    ),
+    CircleAvatar(
+      backgroundColor: ColorsManager.red.withValues(alpha: 0.1),
+      child: Icon(Icons.shopping_bag, color: ColorsManager.red),
+    ),
+    CircleAvatar(
+      backgroundColor: ColorsManager.green.withValues(alpha: 0.1),
+      child: Icon(Icons.movie, color: ColorsManager.green),
+    ),
+    CircleAvatar(
+      backgroundColor: ColorsManager.orange.withValues(alpha: 0.1),
+      child: Icon(Icons.local_gas_station, color: ColorsManager.orange),
+    ),
+    CircleAvatar(
+      backgroundColor: ColorsManager.pink.withValues(alpha: 0.1),
+      child: Icon(Icons.directions_bus, color: ColorsManager.pink),
+    ),
+    CircleAvatar(
+      backgroundColor: ColorsManager.red.withValues(alpha: 0.1),
+      child: Icon(Icons.newspaper, color: ColorsManager.red),
+    ),
+    CircleAvatar(
+      backgroundColor: ColorsManager.orange.withValues(alpha: 0.1),
+      child: Icon(Icons.home, color: ColorsManager.orange),
+    ),
+    CircleAvatar(
+      backgroundColor: ColorsManager.brown.withValues(alpha: 0.1),
+      child: Icon(Icons.more_horiz, color: ColorsManager.brown),
+    ),
+  ];
+}

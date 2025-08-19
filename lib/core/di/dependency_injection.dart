@@ -7,16 +7,13 @@ import 'package:inovola_task/Features/home/domain/repos/home_repo.dart';
 import 'package:inovola_task/Features/home/domain/usecases/fetch_expenses_summary.dart';
 import 'package:inovola_task/Features/home/domain/usecases/fetch_expenses.dart';
 import 'package:inovola_task/Features/home/domain/usecases/fetch_currencies.dart';
-// BLoCs
 import 'package:inovola_task/Features/home/presentation/bloc/home_bloc.dart';
 
 final getIt = GetIt.instance;
 
 Future<void> setupGetIt() async {
-  // Core services
   getIt.registerLazySingleton<ApiService>(() => ApiService());
 
-  // Home feature - Data Sources
   getIt.registerLazySingleton<HomeLocalDataSource>(
     () => HomeLocalDataSourceImpl(),
   );
@@ -24,7 +21,6 @@ Future<void> setupGetIt() async {
     () => HomeRemoteDataSourceImpl(getIt<ApiService>()),
   );
 
-  // Home feature - Repository
   getIt.registerLazySingleton<HomeRepo>(
     () => HomeRepoImpl(
       homeRemoteDataSource: getIt<HomeRemoteDataSource>(),
@@ -32,7 +28,6 @@ Future<void> setupGetIt() async {
     ),
   );
 
-  // Home feature - Use Cases
   getIt.registerLazySingleton<FetchExpensesSummary>(
     () => FetchExpensesSummary(getIt<HomeRepo>()),
   );
@@ -43,7 +38,6 @@ Future<void> setupGetIt() async {
     () => FetchCurrencies(getIt<HomeRepo>()),
   );
 
-  // Home feature - BLoC (Factory registration for multiple instances)
   getIt.registerFactory<HomeBloc>(
     () => HomeBloc(
       fetchExpensesSummary: getIt<FetchExpensesSummary>(),
