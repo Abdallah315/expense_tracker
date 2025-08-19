@@ -1,0 +1,57 @@
+import 'package:inovola_task/Features/home/data/models/exchange_rates.dart';
+import 'package:inovola_task/Features/home/data/models/expense.dart';
+import 'package:inovola_task/Features/home/data/models/expenses_summary.dart';
+
+import 'package:inovola_task/core/networking/api_service.dart';
+import 'package:inovola_task/core/networking/api_constants.dart';
+import 'package:inovola_task/core/helpers/constants.dart';
+
+abstract class HomeRemoteDataSource {
+  Future<ExpensesSummary> fetchExpensesSummary();
+  Future<List<Expense>> fetchExpenses({int page = 1, int pageSize = 10});
+  Future<ExchangeRates> fetchExchangeRates();
+}
+
+class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
+  final ApiService apiService;
+
+  HomeRemoteDataSourceImpl(this.apiService);
+  @override
+  Future<ExpensesSummary> fetchExpensesSummary() async {
+    if (kUseFakeApi) {
+      await Future<void>.delayed(const Duration(seconds: 2));
+      return ExpensesSummary(
+        totalBalance: 1500,
+        totalExpenses: 900,
+        totalIncome: 2400,
+      );
+    } else {
+      final response = await apiService.get(
+        endpoint: ApiConstants.expensesSummary,
+      );
+      return ExpensesSummary.fromMap(response.data);
+    }
+  }
+
+  @override
+  Future<List<Expense>> fetchExpenses({int page = 1, int pageSize = 10}) async {
+    if (kUseFakeApi) {
+      await Future<void>.delayed(const Duration(seconds: 2));
+      return getExpenses(page: page, pageSize: pageSize);
+    } else {
+      final response = await apiService.get(endpoint: ApiConstants.expenses);
+      final expenses = (response.data as List)
+          .map((e) => Expense.fromMap(e))
+          .toList();
+      return expenses;
+    }
+  }
+
+  @override
+  Future<ExchangeRates> fetchExchangeRates() async {
+    final response = await apiService.get(
+      endpoint: ApiConstants.exchangeRates('USD'),
+    );
+    return ExchangeRates.fromMap(response.data);
+  }
+}
