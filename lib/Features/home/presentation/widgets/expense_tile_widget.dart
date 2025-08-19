@@ -25,7 +25,7 @@ class ExpenseTileWidget extends StatelessWidget {
       ),
       child: Row(
         children: [
-          categoriesIcons[expense.category]!,
+          expense.iconData.toWidget(),
           horizontalSpace(12),
           Expanded(
             child: Column(

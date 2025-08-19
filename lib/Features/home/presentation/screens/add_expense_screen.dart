@@ -157,8 +157,6 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   }
 
   void save() {
-    if (!canSave()) return;
-
     final amount = double.parse(amountController.text);
 
     homeBloc.add(

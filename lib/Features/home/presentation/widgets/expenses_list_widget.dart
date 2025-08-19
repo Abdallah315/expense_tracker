@@ -29,8 +29,13 @@ class ExpensesListWidget extends StatelessWidget {
             }
             return Column(
               children: [
-                ...expenses.map(
-                  (expense) => ExpenseTileWidget(expense: expense),
+                ListView.builder(
+                  padding: EdgeInsets.zero,
+                  itemCount: expenses.length > 6 ? 6 : expenses.length,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemBuilder: (context, index) =>
+                      ExpenseTileWidget(expense: expenses[index]),
                 ),
               ],
             );
