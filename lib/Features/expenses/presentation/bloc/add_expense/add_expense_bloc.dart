@@ -55,7 +55,5 @@ class AddExpenseBloc extends Bloc<AddExpenseEvent, AddExpenseState> {
       currency: event.currency,
       date: event.date,
     );
-
-    // add(const LoadHomeDataRequested());
   }
 }

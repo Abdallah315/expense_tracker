@@ -153,6 +153,6 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
       ),
     );
 
-    context.pop();
+    context.pop(true);
   }
 }

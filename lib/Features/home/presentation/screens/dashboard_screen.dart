@@ -34,8 +34,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return Scaffold(
       backgroundColor: ColorsManager.background,
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          context.pushNamed(AppRoutes.addExpense.name);
+        onPressed: () async {
+          final result =
+              await context.pushNamed(AppRoutes.addExpense.name) as bool?;
+          if (result == true && context.mounted) {
+            context.read<HomeBloc>().add(const LoadHomeDataRequested());
+          }
         },
         child: const Icon(Icons.add),
       ),
