@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:inovola_task/Features/home/domain/usecases/fetch_home_expenses.dart';
 import 'package:inovola_task/Features/home/enums/home_enums.dart';
 
 abstract class HomeEvent extends Equatable {

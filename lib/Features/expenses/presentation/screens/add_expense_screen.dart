@@ -8,7 +8,6 @@ import 'package:inovola_task/Features/expenses/presentation/bloc/add_expense/add
 import 'package:inovola_task/Features/expenses/presentation/widgets/categories_drop_down_widget.dart';
 import 'package:inovola_task/Features/expenses/presentation/widgets/categories_icon_widget.dart';
 import 'package:inovola_task/Features/expenses/presentation/widgets/currency_drop_down.dart';
-import 'package:inovola_task/core/di/dependency_injection.dart';
 import 'package:inovola_task/core/helpers/sizes.dart';
 import 'package:inovola_task/core/theming/colors.dart';
 import 'package:inovola_task/core/theming/styles.dart';
