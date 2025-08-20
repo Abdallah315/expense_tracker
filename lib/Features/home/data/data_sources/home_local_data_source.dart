@@ -49,7 +49,7 @@ class HomeLocalDataSourceImpl extends HomeLocalDataSource {
     final isar = await AppDatabase.isar;
     final expenses = await isar.expenseIsars
         .where()
-        .sortByDateDesc() // Sort by date descending for consistent pagination
+        .sortByDateDesc()
         .offset(offset)
         .limit(limit)
         .findAll();

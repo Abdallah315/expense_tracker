@@ -18,7 +18,6 @@ class FetchExpenses {
       pageSize: pageSize,
     );
 
-    // Apply date filter
     switch (filter) {
       case DateFilter.all:
         return allExpenses;

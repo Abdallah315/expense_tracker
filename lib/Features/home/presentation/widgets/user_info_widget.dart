@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:inovola_task/core/theming/colors.dart';
+import 'package:inovola_task/core/theming/styles.dart';
 
 class UserInfoWidget extends StatelessWidget {
   const UserInfoWidget({super.key});
@@ -26,17 +27,13 @@ class UserInfoWidget extends StatelessWidget {
               ),
               TextSpan(
                 text: 'Abdullah Yasser',
-                style: TextStyle(
-                  color: ColorsManager.white,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: TextStyles.font16MediumWhite,
               ),
             ],
           ),
         ),
         Spacer(),
         // ToDO this will be the filter
-        Icon(Icons.notifications, color: ColorsManager.white),
       ],
     );
   }

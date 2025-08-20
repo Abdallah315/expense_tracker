@@ -42,28 +42,23 @@ class HomeRepoImpl implements HomeRepo {
     int pageSize = 10,
   }) async {
     try {
-      // Calculate offset based on page number (page starts from 1)
       final offset = (page - 1) * pageSize;
 
-      // Always try to get from cache first with proper pagination
       final cachedExpenses = await homeLocalDataSource.fetchExpenses(
         offset: offset,
         limit: pageSize,
       );
 
-      // If we have cached data for this page, return it
       if (cachedExpenses.isNotEmpty) {
         log('cachedExpenses for page $page: ${cachedExpenses.length} items');
         return cachedExpenses.map((model) => model.toEntity()).toList();
       }
 
-      // If no cached data for this page, fetch from remote
       final remoteExpenses = await homeRemoteDataSource.fetchExpenses(
         page: page,
         pageSize: pageSize,
       );
 
-      // Save remote expenses to cache
       await homeLocalDataSource.saveExpenses(remoteExpenses);
 
       return remoteExpenses.map((model) => model.toEntity()).toList();

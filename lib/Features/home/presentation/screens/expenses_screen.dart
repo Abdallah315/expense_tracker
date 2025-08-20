@@ -96,7 +96,6 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
                   itemCount: expenses.length + (state.hasMoreExpenses ? 1 : 0),
                   itemBuilder: (context, index) {
                     if (index >= expenses.length) {
-                      // Show loading indicator at bottom while loading more
                       return const Padding(
                         padding: EdgeInsets.symmetric(vertical: 16),
                         child: Center(child: CircularProgressIndicator()),

@@ -10,7 +10,7 @@ part 'expense_isar.g.dart';
 class ExpenseIsar {
   Id id = Isar.autoIncrement;
   late String type;
-  late String iconDataJson; // Store icon as JSON string
+  late String iconDataJson;
   @enumerated
   late CategoriesEnum category;
   late double amount;
@@ -22,9 +22,7 @@ class ExpenseIsar {
   ExpenseEntity toEntity() => ExpenseEntity(
     id: id,
     type: type,
-    iconData: CategoryIconHelper.getIconForCategory(
-      category,
-    ), // Reconstruct icon from category
+    iconData: CategoryIconHelper.getIconForCategory(category),
     category: category,
     amount: amount,
     currency: currency,
@@ -36,8 +34,7 @@ class ExpenseIsar {
   static ExpenseIsar fromModel(Expense e) {
     return ExpenseIsar()
       ..type = e.type
-      ..iconDataJson = e.iconData
-          .toString() // Store icon data as string
+      ..iconDataJson = e.iconData.toString()
       ..category = e.category
       ..amount = e.amount
       ..currency = e.currency

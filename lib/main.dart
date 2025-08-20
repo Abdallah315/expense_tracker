@@ -9,10 +9,8 @@ import 'package:inovola_task/core/utils/simple_bloc_observer.dart';
 import 'package:inovola_task/core/database/app_database.dart';
 
 void main() async {
-  // Ensure Isar directory access is ready
   WidgetsFlutterBinding.ensureInitialized();
   await ScreenUtil.ensureScreenSize();
-  // Open Isar once on startup
   await AppDatabase.isar;
   setupGetIt();
   Bloc.observer = SimpleBlocObserver();
