@@ -2,13 +2,18 @@ import 'package:inovola_task/core/models/expense.dart';
 import 'package:inovola_task/core/models/expense_isar.dart';
 import 'package:inovola_task/Features/home/data/models/expenses_summary_isar.dart';
 import 'package:inovola_task/Features/home/domain/entities/expenses_summay_entity.dart';
+import 'package:inovola_task/Features/home/enums/home_enums.dart';
 import 'package:inovola_task/core/database/app_database.dart';
 import 'package:isar/isar.dart';
 
 abstract class HomeLocalDataSource {
   Future<ExpensesSummaryEntity?> fetchExpensesSummary();
   Future<void> saveExpensesSummary(ExpensesSummaryEntity expensesSummary);
-  Future<List<ExpenseIsar>> fetchHomeExpenses({int offset = 0, int limit = 10});
+  Future<List<ExpenseIsar>> fetchHomeExpenses({
+    int offset = 0,
+    int limit = 10,
+    DateFilter filter = DateFilter.all,
+  });
   Future<void> saveExpenses(List<Expense> expenses);
 }
 
@@ -36,10 +41,35 @@ class HomeLocalDataSourceImpl extends HomeLocalDataSource {
   Future<List<ExpenseIsar>> fetchHomeExpenses({
     int offset = 0,
     int limit = 10,
+    DateFilter filter = DateFilter.all,
   }) async {
     final isar = await AppDatabase.isar;
+
+    final now = DateTime.now();
+    late final DateTime startDate;
+
+    switch (filter) {
+      case DateFilter.all:
+        final expenses = await isar.expenseIsars
+            .where()
+            .sortByDateDesc()
+            .offset(offset)
+            .limit(limit)
+            .findAll();
+        return expenses;
+
+      case DateFilter.thisMonth:
+        startDate = DateTime(now.year, now.month, 1);
+        break;
+
+      case DateFilter.lastSevenDays:
+        startDate = now.subtract(const Duration(days: 7));
+        break;
+    }
+
     final expenses = await isar.expenseIsars
-        .where()
+        .filter()
+        .dateGreaterThan(startDate)
         .sortByDateDesc()
         .offset(offset)
         .limit(limit)

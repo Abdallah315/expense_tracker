@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:inovola_task/Features/home/data/data_sources/home_local_data_source.dart';
 import 'package:inovola_task/Features/home/data/data_sources/home_remote_data_source.dart';
 import 'package:inovola_task/Features/home/domain/entities/expenses_summay_entity.dart';
+import 'package:inovola_task/Features/home/enums/home_enums.dart';
 import 'package:inovola_task/core/entities/expense_entity.dart';
 import 'package:inovola_task/core/errors/failure.dart';
 
@@ -38,23 +39,29 @@ class HomeRepoImpl implements HomeRepo {
   Future<List<ExpenseEntity>> fetchHomeExpenses({
     int page = 1,
     int pageSize = 6,
+    DateFilter filter = DateFilter.all,
   }) async {
     try {
       final offset = (page - 1) * pageSize;
 
+      // ✅ Apply filter at data source level for efficiency
       final cachedExpenses = await homeLocalDataSource.fetchHomeExpenses(
         offset: offset,
         limit: pageSize,
+        filter: filter,
       );
 
       if (cachedExpenses.isNotEmpty) {
-        log('cachedExpenses for page $page: ${cachedExpenses.length} items');
+        log(
+          'cachedExpenses for page $page with filter $filter: ${cachedExpenses.length} items',
+        );
         return cachedExpenses.map((model) => model.toEntity()).toList();
       }
 
       final remoteExpenses = await homeRemoteDataSource.fetchExpenses(
         page: page,
         pageSize: pageSize,
+        filter: filter,
       );
 
       await homeLocalDataSource.saveExpenses(remoteExpenses);
