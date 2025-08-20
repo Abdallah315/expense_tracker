@@ -35,7 +35,14 @@ class ExpenseTileWidget extends StatelessWidget {
                   expense.category.name.toUpperCase(),
                   style: TextStyles.font16MediumBlack,
                 ),
-                Text(expense.type, style: TextStyles.font12RegularGray),
+                Text(
+                  expense.date.isSameDay(DateTime.now())
+                      ? 'Today ${expense.date.formattedDateWithoutTime}'
+                      : expense.date.isYesterday(DateTime.now())
+                      ? 'Yesterday ${expense.date.formattedDateWithoutTime}'
+                      : expense.date.formattedDateWithoutTime,
+                  style: TextStyles.font12RegularGray,
+                ),
               ],
             ),
           ),
@@ -47,11 +54,7 @@ class ExpenseTileWidget extends StatelessWidget {
                 style: TextStyles.font16MediumBlack,
               ),
               Text(
-                expense.date.isSameDay(DateTime.now())
-                    ? 'Today ${expense.date.formattedTime}'
-                    : expense.date.isYesterday(DateTime.now())
-                    ? 'Yesterday ${expense.date.formattedTime}'
-                    : expense.date.formattedDate,
+                '${expense.currency} ${expense.amount.toStringAsFixed(2)}',
                 style: TextStyles.font12RegularGray,
               ),
             ],

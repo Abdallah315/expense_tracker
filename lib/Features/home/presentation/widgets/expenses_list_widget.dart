@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:inovola_task/Features/home/presentation/bloc/home_bloc.dart';
 import 'package:inovola_task/Features/home/presentation/bloc/home_state.dart';
-import 'package:inovola_task/Features/home/presentation/widgets/expense_tile_widget.dart';
+import 'package:inovola_task/core/widgets/expense_tile_widget.dart';
 import 'package:inovola_task/core/widgets/error_widget.dart';
 import 'package:inovola_task/core/widgets/loader.dart';
 

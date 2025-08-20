@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:inovola_task/Features/expenses/presentation/bloc/expenses/expenses_bloc.dart';
 import 'package:inovola_task/Features/expenses/presentation/bloc/expenses/expenses_event.dart';
 import 'package:inovola_task/Features/expenses/presentation/bloc/expenses/expenses_state.dart';
-import 'package:inovola_task/Features/home/presentation/widgets/expense_tile_widget.dart';
+import 'package:inovola_task/core/widgets/expense_tile_widget.dart';
 import 'package:inovola_task/core/theming/colors.dart';
 import 'package:inovola_task/core/theming/styles.dart';
 import 'package:inovola_task/core/widgets/error_widget.dart';
