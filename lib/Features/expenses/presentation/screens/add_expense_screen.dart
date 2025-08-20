@@ -109,6 +109,8 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
             ),
             verticalSpace(32),
             BlocBuilder<AddExpenseBloc, AddExpenseState>(
+              buildWhen: (previous, current) =>
+                  previous.isFormValid != current.isFormValid,
               bloc: addExpenseBloc,
               builder: (context, state) {
                 final isValid = state.isFormValid;

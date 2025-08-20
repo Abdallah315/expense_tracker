@@ -18,6 +18,9 @@ class _CurrencyDropdownState extends State<CurrencyDropdown> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AddExpenseBloc, AddExpenseState>(
+      buildWhen: (previous, current) =>
+          previous.currenciesStatus != current.currenciesStatus ||
+          previous.currencies != current.currencies,
       builder: (context, state) {
         if (state.currenciesStatus == CurrenciesStatus.loading) {
           return Loader();
