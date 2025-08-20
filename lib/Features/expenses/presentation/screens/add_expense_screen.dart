@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:inovola_task/Features/expenses/presentation/bloc/add_expense/add_expense_bloc.dart';
 import 'package:inovola_task/Features/expenses/presentation/bloc/add_expense/add_expense_event.dart';
-import 'package:inovola_task/Features/expenses/presentation/bloc/add_expense/add_expense_form_cubit.dart';
+import 'package:inovola_task/Features/expenses/presentation/bloc/add_expense/add_expense_state.dart';
 import 'package:inovola_task/Features/expenses/presentation/widgets/categories_drop_down_widget.dart';
 import 'package:inovola_task/Features/expenses/presentation/widgets/categories_icon_widget.dart';
 import 'package:inovola_task/Features/expenses/presentation/widgets/currency_drop_down.dart';
@@ -25,23 +25,20 @@ class AddExpenseScreen extends StatefulWidget {
 }
 
 class _AddExpenseScreenState extends State<AddExpenseScreen> {
-  late final AddExpenseFormCubit _formCubit;
-
   @override
   void initState() {
     super.initState();
-    _formCubit = getIt<AddExpenseFormCubit>();
     context.read<AddExpenseBloc>().add(const LoadCurrenciesRequested());
   }
 
   @override
   void dispose() {
-    _formCubit.close();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final addExpenseBloc = context.read<AddExpenseBloc>();
     return Scaffold(
       appBar: AppBar(title: const Text('Add Expense'), centerTitle: true),
       backgroundColor: ColorsManager.white,
@@ -54,14 +51,14 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
             verticalSpace(8),
             CategoriesDropDownWidget(
               onCategorySelected: (category) {
-                _formCubit.setCategory(category);
+                addExpenseBloc.add(FormFieldUpdated(category: category));
               },
             ),
             verticalSpace(16),
             Text('Amount', style: TextStyles.font16MediumBlack),
             verticalSpace(8),
             AppTextFormField(
-              controller: _formCubit.state.amountController,
+              controller: addExpenseBloc.state.amountController,
               hintText: '0',
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -77,7 +74,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
             Text('Currency', style: TextStyles.font16MediumBlack),
             CurrencyDropdown(
               onCurrencySelected: (currency) {
-                _formCubit.setCurrency(currency);
+                addExpenseBloc.add(FormFieldUpdated(currency: currency));
               },
             ),
             verticalSpace(16),
@@ -86,7 +83,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
             AppDatePicker(
               hintText: '02/01/24',
               onDateSelected: (DateTime? date) {
-                _formCubit.setDate(date);
+                addExpenseBloc.add(FormFieldUpdated(date: date));
               },
             ),
             verticalSpace(16),
@@ -94,10 +91,10 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
             verticalSpace(8),
             AppUploadOptions(
               onImageUpload: (File imageFile) {
-                _formCubit.setImageFile(imageFile);
+                addExpenseBloc.add(FormFieldUpdated(imageFile: imageFile));
               },
               onFileUpload: (File file) {
-                _formCubit.setFile(file);
+                addExpenseBloc.add(FormFieldUpdated(file: file));
               },
             ),
             verticalSpace(24),
@@ -105,19 +102,21 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
             verticalSpace(12),
             CategoriesIconWidget(
               onIconSelected: (CategoryIconData iconData) {
-                _formCubit.setSelectedIconData(iconData);
+                addExpenseBloc.add(
+                  FormFieldUpdated(selectedIconData: iconData),
+                );
               },
             ),
             verticalSpace(32),
-            BlocBuilder<AddExpenseFormCubit, AddExpenseFormState>(
-              bloc: _formCubit,
+            BlocBuilder<AddExpenseBloc, AddExpenseState>(
+              bloc: addExpenseBloc,
               builder: (context, state) {
-                final isValid = state.isValid;
+                final isValid = state.isFormValid;
                 return SizedBox(
                   width: double.infinity,
                   height: 52,
                   child: ElevatedButton(
-                    onPressed: isValid ? save : null,
+                    onPressed: isValid ? () => save(addExpenseBloc) : null,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: ColorsManager.primary,
                       shape: RoundedRectangleBorder(
@@ -138,20 +137,12 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     );
   }
 
-  void save() {
-    final formData = _formCubit.state.getFormData();
+  void save(AddExpenseBloc formCubit) {
+    final formData = formCubit.state.getFormData();
     if (formData == null) return;
 
     final addExpenseBloc = BlocProvider.of<AddExpenseBloc>(context);
-    addExpenseBloc.add(
-      SaveExpenseRequested(
-        iconData: formData['iconData'] as CategoryIconData,
-        category: formData['category'] as String,
-        amount: formData['amount'] as double,
-        currency: formData['currency'] as Map<String, num>,
-        date: formData['date'] as DateTime,
-      ),
-    );
+    addExpenseBloc.add(SaveExpenseRequested());
 
     context.pop(true);
   }

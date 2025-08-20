@@ -7,7 +7,6 @@ import 'package:inovola_task/Features/expenses/domain/usecases/fetch_currencies.
 import 'package:inovola_task/Features/expenses/domain/usecases/fetch_expenses.dart';
 import 'package:inovola_task/Features/expenses/domain/usecases/save_expense.dart';
 import 'package:inovola_task/Features/expenses/presentation/bloc/add_expense/add_expense_bloc.dart';
-import 'package:inovola_task/Features/expenses/presentation/bloc/add_expense/add_expense_form_cubit.dart';
 import 'package:inovola_task/Features/expenses/presentation/bloc/expenses/expenses_bloc.dart';
 import 'package:inovola_task/Features/home/presentation/bloc/home_bloc.dart';
 import 'package:inovola_task/core/networking/api_service.dart';
@@ -85,6 +84,4 @@ Future<void> setupGetIt() async {
       saveExpense: getIt<SaveExpense>(),
     ),
   );
-
-  getIt.registerFactory<AddExpenseFormCubit>(() => AddExpenseFormCubit());
 }

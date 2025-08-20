@@ -13,9 +13,13 @@ class AddExpenseBloc extends Bloc<AddExpenseEvent, AddExpenseState> {
     required SaveExpense saveExpense,
   }) : _fetchCurrencies = fetchCurrencies,
        _saveExpense = saveExpense,
-       super(const AddExpenseState.initial()) {
+       super(AddExpenseState.initial()) {
     on<LoadCurrenciesRequested>(_onLoadCurrenciesRequested);
+    on<FormFieldUpdated>(_onFormFieldUpdated);
     on<SaveExpenseRequested>(_onSaveExpenseRequested);
+    on<ValidateForm>(_onValidateForm);
+
+    state.amountController.addListener(() => add(const ValidateForm()));
   }
 
   Future<void> _onLoadCurrenciesRequested(
@@ -44,16 +48,55 @@ class AddExpenseBloc extends Bloc<AddExpenseEvent, AddExpenseState> {
     }
   }
 
+  void _onFormFieldUpdated(
+    FormFieldUpdated event,
+    Emitter<AddExpenseState> emit,
+  ) {
+    emit(
+      state.copyWith(
+        category: event.category ?? state.category,
+        currency: event.currency ?? state.currency,
+        date: event.date ?? state.date,
+        selectedIconData: event.selectedIconData ?? state.selectedIconData,
+        imageFile: event.imageFile ?? state.imageFile,
+        file: event.file ?? state.file,
+      ),
+    );
+
+    add(const ValidateForm());
+  }
+
+  void _onValidateForm(ValidateForm event, Emitter<AddExpenseState> emit) {
+    final isValid =
+        state.amountController.text.isNotEmpty &&
+        double.tryParse(state.amountController.text) != null &&
+        state.category != null &&
+        state.currency != null &&
+        state.date != null &&
+        state.selectedIconData != null;
+
+    emit(state.copyWith(isFormValid: isValid));
+  }
+
   Future<void> _onSaveExpenseRequested(
     SaveExpenseRequested event,
     Emitter<AddExpenseState> emit,
   ) async {
+    final formData = state.getFormData();
+    if (formData == null) return;
+
     await _saveExpense.call(
-      iconData: event.iconData,
-      category: event.category,
-      amount: event.amount,
-      currency: event.currency,
-      date: event.date,
+      iconData: formData['iconData'],
+      category: formData['category'],
+      amount: formData['amount'],
+      currency: formData['currency'],
+      date: formData['date'],
     );
+  }
+
+  @override
+  Future<void> close() {
+    state.amountController.dispose();
+    return super.close();
   }
 }

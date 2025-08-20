@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:equatable/equatable.dart';
 import 'package:inovola_task/core/helpers/icon_helper.dart';
 
@@ -12,21 +13,41 @@ class LoadCurrenciesRequested extends AddExpenseEvent {
   const LoadCurrenciesRequested();
 }
 
-class SaveExpenseRequested extends AddExpenseEvent {
-  final CategoryIconData iconData;
-  final String category;
-  final double amount;
-  final Map<String, num> currency;
-  final DateTime date;
+class FormFieldUpdated extends AddExpenseEvent {
+  final String? category;
+  final Map<String, num>? currency;
+  final DateTime? date;
+  final CategoryIconData? selectedIconData;
+  final File? imageFile;
+  final File? file;
 
-  const SaveExpenseRequested({
-    required this.iconData,
-    required this.category,
-    required this.amount,
-    required this.currency,
-    required this.date,
+  const FormFieldUpdated({
+    this.category,
+    this.currency,
+    this.date,
+    this.selectedIconData,
+    this.imageFile,
+    this.file,
   });
 
   @override
-  List<Object?> get props => [iconData, category, amount, currency, date];
+  List<Object?> get props => [
+    category,
+    currency,
+    date,
+    selectedIconData,
+    imageFile,
+    file,
+  ];
+}
+
+class ValidateForm extends AddExpenseEvent {
+  const ValidateForm();
+}
+
+class SaveExpenseRequested extends AddExpenseEvent {
+  const SaveExpenseRequested();
+
+  @override
+  List<Object?> get props => [];
 }
