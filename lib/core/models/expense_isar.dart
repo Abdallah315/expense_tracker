@@ -1,5 +1,5 @@
-import 'package:inovola_task/Features/home/data/models/expense.dart';
-import 'package:inovola_task/Features/home/domain/entities/expense_entity.dart';
+import 'package:inovola_task/core/models/expense.dart';
+import 'package:inovola_task/core/entities/expense_entity.dart';
 import 'package:inovola_task/core/helpers/enums.dart';
 import 'package:inovola_task/core/helpers/icon_helper.dart';
 import 'package:isar/isar.dart';

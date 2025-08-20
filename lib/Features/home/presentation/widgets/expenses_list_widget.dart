@@ -15,7 +15,7 @@ class ExpensesListWidget extends StatelessWidget {
       buildWhen: (previous, current) =>
           previous.expensesStatus != current.expensesStatus ||
           previous.expenses != current.expenses ||
-          previous.hasMoreExpenses != current.hasMoreExpenses,
+          previous.currentFilter != current.currentFilter,
       builder: (context, state) {
         switch (state.expensesStatus) {
           case ExpensesStatus.initial:
@@ -31,7 +31,7 @@ class ExpensesListWidget extends StatelessWidget {
               children: [
                 ListView.builder(
                   padding: EdgeInsets.zero,
-                  itemCount: expenses.length > 6 ? 6 : expenses.length,
+                  itemCount: expenses.length,
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   itemBuilder: (context, index) =>
@@ -39,9 +39,6 @@ class ExpensesListWidget extends StatelessWidget {
                 ),
               ],
             );
-
-          case ExpensesStatus.loadingMore:
-            return const SizedBox.shrink();
 
           case ExpensesStatus.error:
             return CustomErrorWidget(

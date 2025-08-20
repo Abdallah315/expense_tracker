@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:inovola_task/Features/home/presentation/bloc/home_bloc.dart';
-import 'package:inovola_task/Features/home/presentation/bloc/home_state.dart';
+import 'package:inovola_task/Features/expenses/presentation/bloc/add_expense/add_expense_bloc.dart';
+import 'package:inovola_task/Features/expenses/presentation/bloc/add_expense/add_expense_state.dart';
 import 'package:inovola_task/core/theming/colors.dart';
 import 'package:inovola_task/core/theming/styles.dart';
 import 'package:inovola_task/core/widgets/error_widget.dart';
@@ -17,7 +17,7 @@ class CurrencyDropdown extends StatefulWidget {
 class _CurrencyDropdownState extends State<CurrencyDropdown> {
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<HomeBloc, HomeState>(
+    return BlocBuilder<AddExpenseBloc, AddExpenseState>(
       builder: (context, state) {
         if (state.currenciesStatus == CurrenciesStatus.loading) {
           return Loader();

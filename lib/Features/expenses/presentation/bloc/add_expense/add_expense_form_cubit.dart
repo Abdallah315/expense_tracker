@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:inovola_task/core/helpers/icon_helper.dart';
 
-// Form State
 class AddExpenseFormState {
   final TextEditingController amountController;
   final File? imageFile;
@@ -62,7 +61,6 @@ class AddExpenseFormState {
   }
 }
 
-// Form Cubit
 class AddExpenseFormCubit extends Cubit<AddExpenseFormState> {
   AddExpenseFormCubit()
     : super(
@@ -74,7 +72,6 @@ class AddExpenseFormCubit extends Cubit<AddExpenseFormState> {
     state.amountController.addListener(_validateForm);
   }
 
-  // Setters
   void setImageFile(File? file) {
     emit(state.copyWith(imageFile: file));
     _validateForm();
@@ -105,7 +102,6 @@ class AddExpenseFormCubit extends Cubit<AddExpenseFormState> {
     _validateForm();
   }
 
-  // Validation
   void _validateForm() {
     final isValid =
         state.amountController.text.isNotEmpty &&
@@ -118,7 +114,6 @@ class AddExpenseFormCubit extends Cubit<AddExpenseFormState> {
     emit(state.copyWith(isValid: isValid));
   }
 
-  // Reset form
   void reset() {
     state.amountController.clear();
     emit(

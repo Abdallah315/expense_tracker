@@ -2,7 +2,7 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
-import 'package:inovola_task/Features/home/domain/entities/exchange_rates_entity.dart';
+import 'package:inovola_task/Features/expenses/domain/entities/exchange_rates_entity.dart';
 
 class ExchangeRates {
   final String? result;

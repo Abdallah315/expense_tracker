@@ -1,19 +1,19 @@
-import 'package:inovola_task/Features/home/domain/entities/expense_entity.dart';
+import 'package:inovola_task/core/entities/expense_entity.dart';
 import 'package:inovola_task/Features/home/domain/repos/home_repo.dart';
 
 enum DateFilter { all, thisMonth, lastSevenDays }
 
-class FetchExpenses {
+class FetchHomeExpenses {
   final HomeRepo _repository;
 
-  FetchExpenses(this._repository);
+  FetchHomeExpenses(this._repository);
 
   Future<List<ExpenseEntity>> call({
     int page = 1,
     int pageSize = 10,
     DateFilter filter = DateFilter.all,
   }) async {
-    final allExpenses = await _repository.fetchExpenses(
+    final allExpenses = await _repository.fetchHomeExpenses(
       page: page,
       pageSize: pageSize,
     );

@@ -1,7 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
-import 'package:inovola_task/Features/home/domain/entities/expense_entity.dart';
+import 'package:inovola_task/core/entities/expense_entity.dart';
 import 'package:inovola_task/core/helpers/enums.dart';
 import 'package:inovola_task/core/helpers/icon_helper.dart';
 

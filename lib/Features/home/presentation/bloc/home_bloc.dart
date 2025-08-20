@@ -1,35 +1,21 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:inovola_task/Features/home/domain/usecases/fetch_expenses_summary.dart';
-import 'package:inovola_task/Features/home/domain/usecases/fetch_expenses.dart';
-import 'package:inovola_task/Features/home/domain/usecases/fetch_currencies.dart';
-import 'package:inovola_task/Features/home/domain/usecases/save_expense.dart';
+import 'package:inovola_task/Features/home/domain/usecases/fetch_home_expenses.dart';
 import 'home_event.dart';
 import 'home_state.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final FetchExpensesSummary _fetchExpensesSummary;
-  final FetchExpenses _fetchExpenses;
-  final FetchCurrencies _fetchCurrencies;
-  final SaveExpense _saveExpense;
-
-  static const int _pageSize = 10;
+  final FetchHomeExpenses _fetchHomeExpenses;
 
   HomeBloc({
     required FetchExpensesSummary fetchExpensesSummary,
-    required FetchExpenses fetchExpenses,
-    required FetchCurrencies fetchCurrencies,
-    required SaveExpense saveExpense,
+    required FetchHomeExpenses fetchHomeExpenses,
   }) : _fetchExpensesSummary = fetchExpensesSummary,
-       _fetchExpenses = fetchExpenses,
-       _fetchCurrencies = fetchCurrencies,
-       _saveExpense = saveExpense,
+       _fetchHomeExpenses = fetchHomeExpenses,
        super(const HomeState.initial()) {
     on<LoadHomeDataRequested>(_onLoadHomeDataRequested);
-    on<LoadMoreExpensesRequested>(_onLoadMoreExpensesRequested);
-    on<LoadFullExpensesRequested>(_onLoadFullExpensesRequested);
     on<FilterChangedEvent>(_onFilterChanged);
-    on<LoadCurrenciesRequested>(_onLoadCurrenciesRequested);
-    on<SaveExpenseRequested>(_onSaveExpenseRequested);
   }
 
   Future<void> _onLoadHomeDataRequested(
@@ -69,89 +55,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   Future<void> _loadInitialExpenses(Emitter<HomeState> emit) async {
     try {
-      final expenses = await _fetchExpenses.call(page: 1, pageSize: 6);
+      final expenses = await _fetchHomeExpenses.call(page: 1, pageSize: 6);
 
       emit(
         state.copyWith(
           expensesStatus: ExpensesStatus.loaded,
           expenses: expenses,
-          currentPage: 1,
-          hasMoreExpenses: expenses.length == 6,
-          expensesError: null,
-        ),
-      );
-    } catch (e) {
-      emit(
-        state.copyWith(
-          expensesStatus: ExpensesStatus.error,
-          expensesError: e.toString(),
-        ),
-      );
-    }
-  }
-
-  Future<void> _onLoadMoreExpensesRequested(
-    LoadMoreExpensesRequested event,
-    Emitter<HomeState> emit,
-  ) async {
-    if (state.expensesStatus != ExpensesStatus.loaded ||
-        state.expenses == null ||
-        !state.hasMoreExpenses) {
-      return;
-    }
-
-    emit(state.copyWith(expensesStatus: ExpensesStatus.loadingMore));
-
-    try {
-      final currentPage = state.currentPage + 1;
-
-      final moreExpenses = await _fetchExpenses.call(
-        page: currentPage,
-        pageSize: _pageSize,
-        filter: state.currentFilter,
-      );
-
-      final existingExpenseIds = state.expenses!.map((e) => e.id).toSet();
-      final newExpenses = moreExpenses
-          .where((expense) => !existingExpenseIds.contains(expense.id))
-          .toList();
-
-      final updatedExpenses = [...state.expenses!, ...newExpenses];
-
-      emit(
-        state.copyWith(
-          expensesStatus: ExpensesStatus.loaded,
-          expenses: updatedExpenses,
-          currentPage: currentPage,
-
-          hasMoreExpenses: moreExpenses.length == _pageSize,
-        ),
-      );
-    } catch (e) {
-      emit(
-        state.copyWith(
-          expensesStatus: ExpensesStatus.error,
-          expensesError: e.toString(),
-        ),
-      );
-    }
-  }
-
-  Future<void> _onLoadFullExpensesRequested(
-    LoadFullExpensesRequested event,
-    Emitter<HomeState> emit,
-  ) async {
-    emit(state.copyWith(expensesStatus: ExpensesStatus.loading));
-
-    try {
-      final expenses = await _fetchExpenses.call(page: 1, pageSize: _pageSize);
-
-      emit(
-        state.copyWith(
-          expensesStatus: ExpensesStatus.loaded,
-          expenses: expenses,
-          currentPage: 1,
-          hasMoreExpenses: expenses.length == _pageSize,
           expensesError: null,
         ),
       );
@@ -174,13 +83,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         expensesStatus: ExpensesStatus.loading,
         expenses: null,
         currentFilter: event.filter,
-        currentPage: 1,
-        hasMoreExpenses: false,
       ),
     );
 
     try {
-      final filteredExpenses = await _fetchExpenses.call(
+      final filteredExpenses = await _fetchHomeExpenses.call(
         page: 1,
         pageSize: 6,
         filter: event.filter,
@@ -190,62 +97,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         state.copyWith(
           expensesStatus: ExpensesStatus.loaded,
           expenses: filteredExpenses,
-          hasMoreExpenses: filteredExpenses.length == 6,
           expensesError: null,
         ),
       );
-    } catch (e) {
-      emit(
-        state.copyWith(
-          expensesStatus: ExpensesStatus.error,
-          expensesError: e.toString(),
-        ),
-      );
-    }
-  }
-
-  Future<void> _onLoadCurrenciesRequested(
-    LoadCurrenciesRequested event,
-    Emitter<HomeState> emit,
-  ) async {
-    emit(state.copyWith(currenciesStatus: CurrenciesStatus.loading));
-
-    try {
-      final currencies = await _fetchCurrencies.call();
-
-      emit(
-        state.copyWith(
-          currenciesStatus: CurrenciesStatus.loaded,
-          currencies: currencies,
-          currenciesError: null,
-        ),
-      );
-    } catch (e) {
-      emit(
-        state.copyWith(
-          currenciesStatus: CurrenciesStatus.error,
-          currenciesError: e.toString(),
-        ),
-      );
-    }
-  }
-
-  Future<void> _onSaveExpenseRequested(
-    SaveExpenseRequested event,
-    Emitter<HomeState> emit,
-  ) async {
-    emit(state.copyWith(expensesStatus: ExpensesStatus.loading));
-
-    try {
-      await _saveExpense.call(
-        iconData: event.iconData,
-        category: event.category,
-        amount: event.amount,
-        currency: event.currency,
-        date: event.date,
-      );
-
-      add(const LoadHomeDataRequested());
     } catch (e) {
       emit(
         state.copyWith(

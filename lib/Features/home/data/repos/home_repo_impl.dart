@@ -2,10 +2,8 @@ import 'dart:developer';
 
 import 'package:inovola_task/Features/home/data/data_sources/home_local_data_source.dart';
 import 'package:inovola_task/Features/home/data/data_sources/home_remote_data_source.dart';
-import 'package:inovola_task/Features/home/data/models/expense.dart';
-import 'package:inovola_task/Features/home/domain/entities/exchange_rates_entity.dart';
 import 'package:inovola_task/Features/home/domain/entities/expenses_summay_entity.dart';
-import 'package:inovola_task/Features/home/domain/entities/expense_entity.dart';
+import 'package:inovola_task/core/entities/expense_entity.dart';
 import 'package:inovola_task/core/errors/failure.dart';
 
 import '../../domain/repos/home_repo.dart';
@@ -37,14 +35,14 @@ class HomeRepoImpl implements HomeRepo {
   }
 
   @override
-  Future<List<ExpenseEntity>> fetchExpenses({
+  Future<List<ExpenseEntity>> fetchHomeExpenses({
     int page = 1,
-    int pageSize = 10,
+    int pageSize = 6,
   }) async {
     try {
       final offset = (page - 1) * pageSize;
 
-      final cachedExpenses = await homeLocalDataSource.fetchExpenses(
+      final cachedExpenses = await homeLocalDataSource.fetchHomeExpenses(
         offset: offset,
         limit: pageSize,
       );
@@ -65,22 +63,5 @@ class HomeRepoImpl implements HomeRepo {
     } catch (e) {
       throw ServerFailure(e.toString());
     }
-  }
-
-  @override
-  Future<ExchangeRatesEntity> fetchExchangeRates() async {
-    try {
-      final remoteExchangeRates = await homeRemoteDataSource
-          .fetchExchangeRates();
-      final entity = remoteExchangeRates.toEntity();
-      return entity;
-    } catch (e) {
-      throw ServerFailure(e.toString());
-    }
-  }
-
-  @override
-  Future<void> saveExpense(ExpenseEntity expense) async {
-    await homeLocalDataSource.saveExpense(Expense.fromEntity(expense));
   }
 }

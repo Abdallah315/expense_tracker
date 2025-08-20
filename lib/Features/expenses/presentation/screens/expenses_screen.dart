@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:inovola_task/Features/home/presentation/bloc/home_bloc.dart';
-import 'package:inovola_task/Features/home/presentation/bloc/home_event.dart';
-import 'package:inovola_task/Features/home/presentation/bloc/home_state.dart';
+import 'package:inovola_task/Features/expenses/presentation/bloc/expenses/expenses_bloc.dart';
+import 'package:inovola_task/Features/expenses/presentation/bloc/expenses/expenses_event.dart';
+import 'package:inovola_task/Features/expenses/presentation/bloc/expenses/expenses_state.dart';
 import 'package:inovola_task/Features/home/presentation/widgets/expense_tile_widget.dart';
 import 'package:inovola_task/core/theming/colors.dart';
 import 'package:inovola_task/core/theming/styles.dart';
@@ -27,7 +27,7 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
   }
 
   void initData() {
-    context.read<HomeBloc>().add(const LoadFullExpensesRequested());
+    context.read<ExpensesBloc>().add(const LoadFullExpensesRequested());
   }
 
   @override
@@ -38,7 +38,7 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
 
   void _onScroll() {
     if (_isBottom) {
-      context.read<HomeBloc>().add(const LoadMoreExpensesRequested());
+      context.read<ExpensesBloc>().add(const LoadMoreExpensesRequested());
     }
   }
 
@@ -58,7 +58,7 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
         backgroundColor: ColorsManager.background,
         elevation: 0,
       ),
-      body: BlocBuilder<HomeBloc, HomeState>(
+      body: BlocBuilder<ExpensesBloc, ExpensesState>(
         buildWhen: (previous, current) =>
             previous.expensesStatus != current.expensesStatus ||
             previous.expenses != current.expenses ||

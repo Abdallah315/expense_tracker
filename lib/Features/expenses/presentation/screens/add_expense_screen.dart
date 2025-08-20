@@ -2,12 +2,12 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:inovola_task/Features/home/presentation/bloc/home_bloc.dart';
-import 'package:inovola_task/Features/home/presentation/bloc/home_event.dart';
-import 'package:inovola_task/Features/home/presentation/cubit/add_expense_form_cubit.dart';
-import 'package:inovola_task/Features/home/presentation/widgets/categories_drop_down_widget.dart';
-import 'package:inovola_task/Features/home/presentation/widgets/categories_icon_widget.dart';
-import 'package:inovola_task/Features/home/presentation/widgets/currency_drop_down.dart';
+import 'package:inovola_task/Features/expenses/presentation/bloc/add_expense/add_expense_bloc.dart';
+import 'package:inovola_task/Features/expenses/presentation/bloc/add_expense/add_expense_event.dart';
+import 'package:inovola_task/Features/expenses/presentation/bloc/add_expense/add_expense_form_cubit.dart';
+import 'package:inovola_task/Features/expenses/presentation/widgets/categories_drop_down_widget.dart';
+import 'package:inovola_task/Features/expenses/presentation/widgets/categories_icon_widget.dart';
+import 'package:inovola_task/Features/expenses/presentation/widgets/currency_drop_down.dart';
 import 'package:inovola_task/core/di/dependency_injection.dart';
 import 'package:inovola_task/core/helpers/sizes.dart';
 import 'package:inovola_task/core/theming/colors.dart';
@@ -31,7 +31,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   void initState() {
     super.initState();
     _formCubit = getIt<AddExpenseFormCubit>();
-    context.read<HomeBloc>().add(const LoadCurrenciesRequested());
+    context.read<AddExpenseBloc>().add(const LoadCurrenciesRequested());
   }
 
   @override
@@ -142,8 +142,8 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     final formData = _formCubit.state.getFormData();
     if (formData == null) return;
 
-    final homeBloc = BlocProvider.of<HomeBloc>(context);
-    homeBloc.add(
+    final addExpenseBloc = BlocProvider.of<AddExpenseBloc>(context);
+    addExpenseBloc.add(
       SaveExpenseRequested(
         iconData: formData['iconData'] as CategoryIconData,
         category: formData['category'] as String,
