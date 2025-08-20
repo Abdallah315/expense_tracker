@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:inovola_task/Features/home/presentation/bloc/home_bloc.dart';
 import 'package:inovola_task/Features/home/presentation/bloc/home_event.dart';
+import 'package:inovola_task/Features/home/presentation/cubit/add_expense_form_cubit.dart';
 import 'package:inovola_task/Features/home/presentation/widgets/categories_drop_down_widget.dart';
 import 'package:inovola_task/Features/home/presentation/widgets/categories_icon_widget.dart';
 import 'package:inovola_task/Features/home/presentation/widgets/currency_drop_down.dart';
@@ -24,53 +25,18 @@ class AddExpenseScreen extends StatefulWidget {
 }
 
 class _AddExpenseScreenState extends State<AddExpenseScreen> {
-  late TextEditingController amountController;
-
-  final ValueNotifier<File?> imageFileNotifier = ValueNotifier<File?>(null);
-  final ValueNotifier<File?> fileNotifier = ValueNotifier<File?>(null);
-  final ValueNotifier<String?> categoryNotifier = ValueNotifier<String?>(null);
-  final ValueNotifier<Map<String, num>?> currencyNotifier =
-      ValueNotifier<Map<String, num>?>(null);
-  final ValueNotifier<DateTime?> dateNotifier = ValueNotifier<DateTime?>(null);
-  final ValueNotifier<CategoryIconData?> selectedIconDataNotifier =
-      ValueNotifier<CategoryIconData?>(null);
-
-  final ValueNotifier<bool> _formValidationNotifier = ValueNotifier<bool>(
-    false,
-  );
+  late final AddExpenseFormCubit _formCubit;
 
   @override
   void initState() {
     super.initState();
-    initData();
-    _addListeners();
-  }
-
-  void initData() {
+    _formCubit = getIt<AddExpenseFormCubit>();
     context.read<HomeBloc>().add(const LoadCurrenciesRequested());
-  }
-
-  void _addListeners() {
-    amountController = TextEditingController();
-    amountController.addListener(_updateFormValidation);
-    imageFileNotifier.addListener(_updateFormValidation);
-    fileNotifier.addListener(_updateFormValidation);
-    categoryNotifier.addListener(_updateFormValidation);
-    currencyNotifier.addListener(_updateFormValidation);
-    dateNotifier.addListener(_updateFormValidation);
-    selectedIconDataNotifier.addListener(_updateFormValidation);
   }
 
   @override
   void dispose() {
-    amountController.dispose();
-    imageFileNotifier.dispose();
-    fileNotifier.dispose();
-    categoryNotifier.dispose();
-    currencyNotifier.dispose();
-    dateNotifier.dispose();
-    selectedIconDataNotifier.dispose();
-    _formValidationNotifier.dispose();
+    _formCubit.close();
     super.dispose();
   }
 
@@ -88,14 +54,14 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
             verticalSpace(8),
             CategoriesDropDownWidget(
               onCategorySelected: (category) {
-                categoryNotifier.value = category;
+                _formCubit.setCategory(category);
               },
             ),
             verticalSpace(16),
             Text('Amount', style: TextStyles.font16MediumBlack),
             verticalSpace(8),
             AppTextFormField(
-              controller: amountController,
+              controller: _formCubit.state.amountController,
               hintText: '0',
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -111,7 +77,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
             Text('Currency', style: TextStyles.font16MediumBlack),
             CurrencyDropdown(
               onCurrencySelected: (currency) {
-                currencyNotifier.value = currency;
+                _formCubit.setCurrency(currency);
               },
             ),
             verticalSpace(16),
@@ -120,7 +86,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
             AppDatePicker(
               hintText: '02/01/24',
               onDateSelected: (DateTime? date) {
-                dateNotifier.value = date;
+                _formCubit.setDate(date);
               },
             ),
             verticalSpace(16),
@@ -128,10 +94,10 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
             verticalSpace(8),
             AppUploadOptions(
               onImageUpload: (File imageFile) {
-                imageFileNotifier.value = imageFile;
+                _formCubit.setImageFile(imageFile);
               },
               onFileUpload: (File file) {
-                fileNotifier.value = file;
+                _formCubit.setFile(file);
               },
             ),
             verticalSpace(24),
@@ -139,14 +105,14 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
             verticalSpace(12),
             CategoriesIconWidget(
               onIconSelected: (CategoryIconData iconData) {
-                selectedIconDataNotifier.value = iconData;
+                _formCubit.setSelectedIconData(iconData);
               },
             ),
             verticalSpace(32),
-            // Reactive save button that listens to all form field changes
-            ValueListenableBuilder<bool>(
-              valueListenable: _formValidationNotifier,
-              builder: (context, isValid, child) {
+            BlocBuilder<AddExpenseFormCubit, AddExpenseFormState>(
+              bloc: _formCubit,
+              builder: (context, state) {
+                final isValid = state.isValid;
                 return SizedBox(
                   width: double.infinity,
                   height: 52,
@@ -172,47 +138,21 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     );
   }
 
-  bool canSave() {
-    return amountController.text.isNotEmpty &&
-        double.tryParse(amountController.text) != null &&
-        categoryNotifier.value != null &&
-        currencyNotifier.value != null &&
-        dateNotifier.value != null &&
-        selectedIconDataNotifier.value != null;
-  }
-
   void save() {
-    final amount = double.parse(amountController.text);
+    final formData = _formCubit.state.getFormData();
+    if (formData == null) return;
+
     final homeBloc = BlocProvider.of<HomeBloc>(context);
     homeBloc.add(
       SaveExpenseRequested(
-        iconData: selectedIconDataNotifier.value!,
-        category: categoryNotifier.value!,
-        amount: amount,
-        currency: currencyNotifier.value!,
-        date: dateNotifier.value!,
-      ),
-    );
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Expense saved successfully!'),
-        backgroundColor: Colors.green,
+        iconData: formData['iconData'] as CategoryIconData,
+        category: formData['category'] as String,
+        amount: formData['amount'] as double,
+        currency: formData['currency'] as Map<String, num>,
+        date: formData['date'] as DateTime,
       ),
     );
 
     context.pop();
-  }
-
-  void _updateFormValidation() {
-    final isValid =
-        amountController.text.isNotEmpty &&
-        double.tryParse(amountController.text) != null &&
-        categoryNotifier.value != null &&
-        currencyNotifier.value != null &&
-        dateNotifier.value != null &&
-        selectedIconDataNotifier.value != null;
-
-    _formValidationNotifier.value = isValid;
   }
 }

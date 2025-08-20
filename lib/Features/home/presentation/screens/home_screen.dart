@@ -4,7 +4,6 @@ import 'package:inovola_task/Features/home/presentation/bloc/home_bloc.dart';
 import 'package:inovola_task/Features/home/presentation/bloc/home_event.dart';
 import 'package:inovola_task/Features/home/presentation/widgets/header_widget.dart';
 import 'package:inovola_task/Features/home/presentation/widgets/expenses_list_widget.dart';
-import 'package:inovola_task/core/di/dependency_injection.dart';
 import 'package:inovola_task/core/helpers/sizes.dart';
 import 'package:inovola_task/core/routing/app_router.dart';
 import 'package:inovola_task/core/theming/colors.dart';

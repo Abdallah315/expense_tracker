@@ -9,6 +9,7 @@ import 'package:inovola_task/Features/home/domain/usecases/fetch_expenses.dart';
 import 'package:inovola_task/Features/home/domain/usecases/fetch_currencies.dart';
 import 'package:inovola_task/Features/home/domain/usecases/save_expense.dart';
 import 'package:inovola_task/Features/home/presentation/bloc/home_bloc.dart';
+import 'package:inovola_task/Features/home/presentation/cubit/add_expense_form_cubit.dart';
 
 final getIt = GetIt.instance;
 
@@ -50,4 +51,7 @@ Future<void> setupGetIt() async {
       saveExpense: getIt<SaveExpense>(),
     ),
   );
+
+  // Form Cubit - Factory for fresh instance per screen
+  getIt.registerFactory<AddExpenseFormCubit>(() => AddExpenseFormCubit());
 }
