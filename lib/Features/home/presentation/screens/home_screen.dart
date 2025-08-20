@@ -11,50 +11,59 @@ import 'package:inovola_task/core/theming/colors.dart';
 import 'package:go_router/go_router.dart';
 import 'package:inovola_task/core/theming/styles.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    initData();
+  }
+
+  void initData() {
+    context.read<HomeBloc>().add(const LoadHomeDataRequested());
+  }
 
   @override
   Widget build(BuildContext context) {
     final height = getHeight(context);
-    return BlocProvider<HomeBloc>(
-      create: (_) => getIt<HomeBloc>()..add(const LoadHomeDataRequested()),
-      child: Scaffold(
-        backgroundColor: ColorsManager.background,
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            context.pushNamed(AppRoutes.addExpense.name);
-          },
-          child: const Icon(Icons.add),
-        ),
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              HeaderWidget(),
-              verticalSpace(height * 0.08),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: pagePadding),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Recent Expenses',
-                      style: TextStyles.font16MediumBlack,
+    return Scaffold(
+      backgroundColor: ColorsManager.background,
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          context.pushNamed(AppRoutes.addExpense.name);
+        },
+        child: const Icon(Icons.add),
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            HeaderWidget(),
+            verticalSpace(height * 0.08),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: pagePadding),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Recent Expenses', style: TextStyles.font16MediumBlack),
+                  GestureDetector(
+                    onTap: () => context.pushNamed(AppRoutes.expenses.name),
+                    child: Text(
+                      'see all',
+                      style: TextStyle(color: ColorsManager.black),
                     ),
-                    GestureDetector(
-                      onTap: () => context.pushNamed(AppRoutes.expenses.name),
-                      child: Text(
-                        'see all',
-                        style: TextStyle(color: ColorsManager.black),
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-              verticalSpace(12),
-              const ExpensesListWidget(),
-            ],
-          ),
+            ),
+            verticalSpace(12),
+            const ExpensesListWidget(),
+          ],
         ),
       ),
     );

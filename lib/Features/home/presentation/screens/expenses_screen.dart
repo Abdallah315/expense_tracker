@@ -19,16 +19,16 @@ class ExpensesScreen extends StatefulWidget {
 
 class _ExpensesScreenState extends State<ExpensesScreen> {
   final ScrollController _scrollController = ScrollController();
-  late HomeBloc _homeBloc;
 
   @override
   void initState() {
     super.initState();
-    _homeBloc = getIt<HomeBloc>();
+    initData();
     _scrollController.addListener(_onScroll);
+  }
 
-    // Load initial full expenses list for this screen
-    _loadFullExpensesList();
+  void initData() {
+    context.read<HomeBloc>().add(const LoadFullExpensesRequested());
   }
 
   @override
@@ -37,14 +37,9 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
     super.dispose();
   }
 
-  void _loadFullExpensesList() {
-    // Load full expenses list specifically for this screen
-    _homeBloc.add(const LoadFullExpensesRequested());
-  }
-
   void _onScroll() {
     if (_isBottom) {
-      _homeBloc.add(const LoadMoreExpensesRequested());
+      context.read<HomeBloc>().add(const LoadMoreExpensesRequested());
     }
   }
 
@@ -52,70 +47,67 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
     if (!_scrollController.hasClients) return false;
     final maxScroll = _scrollController.position.maxScrollExtent;
     final currentScroll = _scrollController.offset;
-    return currentScroll >= (maxScroll * 0.9); // Trigger at 90% scroll
+    return currentScroll >= (maxScroll * 0.9);
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<HomeBloc>.value(
-      value: _homeBloc,
-      child: Scaffold(
+    return Scaffold(
+      backgroundColor: ColorsManager.background,
+      appBar: AppBar(
+        title: Text('All Expenses', style: TextStyles.font16MediumBlack),
         backgroundColor: ColorsManager.background,
-        appBar: AppBar(
-          title: Text('All Expenses', style: TextStyles.font16MediumBlack),
-          backgroundColor: ColorsManager.background,
-          elevation: 0,
-        ),
-        body: BlocBuilder<HomeBloc, HomeState>(
-          buildWhen: (previous, current) =>
-              previous.expensesStatus != current.expensesStatus ||
-              previous.expenses != current.expenses ||
-              previous.hasMoreExpenses != current.hasMoreExpenses,
-          builder: (context, state) {
-            switch (state.expensesStatus) {
-              case ExpensesStatus.initial:
-              case ExpensesStatus.loading:
-                return const Loader();
+        elevation: 0,
+      ),
+      body: BlocBuilder<HomeBloc, HomeState>(
+        buildWhen: (previous, current) =>
+            previous.expensesStatus != current.expensesStatus ||
+            previous.expenses != current.expenses ||
+            previous.hasMoreExpenses != current.hasMoreExpenses,
+        builder: (context, state) {
+          switch (state.expensesStatus) {
+            case ExpensesStatus.initial:
+            case ExpensesStatus.loading:
+              return const Loader();
 
-              case ExpensesStatus.loaded:
-              case ExpensesStatus.loadingMore:
-                final expenses = state.expenses ?? [];
+            case ExpensesStatus.loaded:
+            case ExpensesStatus.loadingMore:
+              final expenses = state.expenses ?? [];
 
-                if (expenses.isEmpty) {
-                  return const Center(
-                    child: Text(
-                      'No expenses found',
-                      style: TextStyle(fontSize: 16),
-                    ),
-                  );
-                }
+              if (expenses.isEmpty) {
+                return const Center(
+                  child: Text(
+                    'No expenses found',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                );
+              }
 
-                return ListView.builder(
-                  controller: _scrollController,
-                  padding: const EdgeInsets.all(16),
-                  itemCount: expenses.length + (state.hasMoreExpenses ? 1 : 0),
-                  itemBuilder: (context, index) {
-                    if (index >= expenses.length) {
-                      return const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 16),
-                        child: Center(child: CircularProgressIndicator()),
-                      );
-                    }
-
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 8),
-                      child: ExpenseTileWidget(expense: expenses[index]),
+              return ListView.builder(
+                controller: _scrollController,
+                padding: const EdgeInsets.all(16),
+                itemCount: expenses.length + (state.hasMoreExpenses ? 1 : 0),
+                itemBuilder: (context, index) {
+                  if (index >= expenses.length) {
+                    return const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 16),
+                      child: Center(child: CircularProgressIndicator()),
                     );
-                  },
-                );
+                  }
 
-              case ExpensesStatus.error:
-                return CustomErrorWidget(
-                  error: state.expensesError ?? 'Something went wrong',
-                );
-            }
-          },
-        ),
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: ExpenseTileWidget(expense: expenses[index]),
+                  );
+                },
+              );
+
+            case ExpensesStatus.error:
+              return CustomErrorWidget(
+                error: state.expensesError ?? 'Something went wrong',
+              );
+          }
+        },
       ),
     );
   }

@@ -42,7 +42,7 @@ Future<void> setupGetIt() async {
     () => SaveExpense(getIt<HomeRepo>()),
   );
 
-  getIt.registerLazySingleton<HomeBloc>(
+  getIt.registerFactory<HomeBloc>(
     () => HomeBloc(
       fetchExpensesSummary: getIt<FetchExpensesSummary>(),
       fetchExpenses: getIt<FetchExpenses>(),
