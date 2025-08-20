@@ -18,13 +18,16 @@ class HomeRepoImpl implements HomeRepo {
     required this.homeLocalDataSource,
   });
   @override
-  Future<ExpensesSummaryEntity> fetchExpensesSummary() async {
+  Future<ExpensesSummaryEntity> fetchExpensesSummary({
+    DateFilter filter = DateFilter.all,
+  }) async {
     try {
       final cachedExpensesSummary = await homeLocalDataSource
-          .fetchExpensesSummary();
+          .fetchExpensesSummary(filter: filter);
       if (cachedExpensesSummary != null) {
         return cachedExpensesSummary;
       }
+
       final remoteExpensesSummary = await homeRemoteDataSource
           .fetchExpensesSummary();
       final entity = remoteExpensesSummary.toEntity();
@@ -44,7 +47,6 @@ class HomeRepoImpl implements HomeRepo {
     try {
       final offset = (page - 1) * pageSize;
 
-      // ✅ Apply filter at data source level for efficiency
       final cachedExpenses = await homeLocalDataSource.fetchHomeExpenses(
         offset: offset,
         limit: pageSize,

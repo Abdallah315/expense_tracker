@@ -7,7 +7,9 @@ import 'package:inovola_task/core/database/app_database.dart';
 import 'package:isar/isar.dart';
 
 abstract class HomeLocalDataSource {
-  Future<ExpensesSummaryEntity?> fetchExpensesSummary();
+  Future<ExpensesSummaryEntity?> fetchExpensesSummary({
+    DateFilter filter = DateFilter.all,
+  });
   Future<void> saveExpensesSummary(ExpensesSummaryEntity expensesSummary);
   Future<List<ExpenseIsar>> fetchHomeExpenses({
     int offset = 0,
@@ -19,10 +21,68 @@ abstract class HomeLocalDataSource {
 
 class HomeLocalDataSourceImpl extends HomeLocalDataSource {
   @override
-  Future<ExpensesSummaryEntity?> fetchExpensesSummary() async {
+  Future<ExpensesSummaryEntity?> fetchExpensesSummary({
+    DateFilter filter = DateFilter.all,
+  }) async {
     final isar = await AppDatabase.isar;
-    final doc = await isar.expensesSummaryIsars.get(0);
-    return doc?.toEntity();
+
+    final filteredExpenses = await _getFilteredExpenses(isar, filter);
+
+    if (filteredExpenses.isEmpty) {
+      return null;
+    }
+
+    double totalExpenses = 0;
+    double totalIncome = 0;
+
+    for (final expense in filteredExpenses) {
+      if (expense.type.toLowerCase() == 'expense') {
+        totalExpenses += expense.amountInUSD;
+      } else if (expense.type.toLowerCase() == 'income') {
+        totalIncome += expense.amountInUSD;
+      }
+    }
+
+    final totalBalance = totalIncome - totalExpenses;
+
+    return ExpensesSummaryEntity(
+      totalBalance: totalBalance,
+      totalExpenses: totalExpenses,
+      totalIncome: totalIncome,
+    );
+  }
+
+  Future<List<ExpenseIsar>> _getFilteredExpenses(
+    Isar isar,
+    DateFilter filter,
+  ) async {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+
+    switch (filter) {
+      case DateFilter.all:
+        return await isar.expenseIsars.where().sortByDateDesc().findAll();
+
+      case DateFilter.thisMonth:
+        final startOfMonth = DateTime(now.year, now.month, 1);
+        final endOfMonth = DateTime(now.year, now.month + 1);
+
+        return await isar.expenseIsars
+            .filter()
+            .dateBetween(startOfMonth, endOfMonth)
+            .sortByDateDesc()
+            .findAll();
+
+      case DateFilter.lastSevenDays:
+        final sevenDaysAgo = today.subtract(const Duration(days: 7));
+        final endOfDay = DateTime(today.year, today.month, today.day);
+
+        return await isar.expenseIsars
+            .filter()
+            .dateBetween(sevenDaysAgo, endOfDay)
+            .sortByDateDesc()
+            .findAll();
+    }
   }
 
   @override
@@ -45,36 +105,16 @@ class HomeLocalDataSourceImpl extends HomeLocalDataSource {
   }) async {
     final isar = await AppDatabase.isar;
 
-    final now = DateTime.now();
-    late final DateTime startDate;
+    final filteredExpenses = await _getFilteredExpenses(isar, filter);
 
-    switch (filter) {
-      case DateFilter.all:
-        final expenses = await isar.expenseIsars
-            .where()
-            .sortByDateDesc()
-            .offset(offset)
-            .limit(limit)
-            .findAll();
-        return expenses;
+    final startIndex = offset;
+    final endIndex = offset + limit;
 
-      case DateFilter.thisMonth:
-        startDate = DateTime(now.year, now.month, 1);
-        break;
-
-      case DateFilter.lastSevenDays:
-        startDate = now.subtract(const Duration(days: 7));
-        break;
+    if (startIndex >= filteredExpenses.length) {
+      return [];
     }
 
-    final expenses = await isar.expenseIsars
-        .filter()
-        .dateGreaterThan(startDate)
-        .sortByDateDesc()
-        .offset(offset)
-        .limit(limit)
-        .findAll();
-    return expenses;
+    return filteredExpenses.skip(startIndex).take(limit).toList();
   }
 
   @override

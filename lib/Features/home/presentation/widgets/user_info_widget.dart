@@ -12,6 +12,7 @@ class UserInfoWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final homeBloc = context.watch<HomeBloc>();
     return Row(
       spacing: 10,
       children: [
@@ -44,7 +45,7 @@ class UserInfoWidget extends StatelessWidget {
           builder: (context, state) => ExpenseFilterDropdown(
             currentFilter: state.currentFilter,
             onFilterChanged: (filter) {
-              context.read<HomeBloc>().add(FilterChangedEvent(filter));
+              homeBloc.add(FilterChangedEvent(filter));
             },
           ),
         ),

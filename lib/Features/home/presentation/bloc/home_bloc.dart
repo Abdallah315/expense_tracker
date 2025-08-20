@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:inovola_task/Features/home/domain/usecases/fetch_expenses_summary.dart';
 import 'package:inovola_task/Features/home/domain/usecases/fetch_home_expenses.dart';
+import 'package:inovola_task/Features/home/enums/home_enums.dart';
 import 'home_event.dart';
 import 'home_state.dart';
 
@@ -34,7 +35,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   Future<void> _loadSummary(Emitter<HomeState> emit) async {
     try {
-      final summary = await _fetchExpensesSummary.call();
+      final summary = await _fetchExpensesSummary.call(
+        filter: state.currentFilter,
+      );
 
       emit(
         state.copyWith(
@@ -80,17 +83,52 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   ) async {
     emit(
       state.copyWith(
+        summaryStatus: SummaryStatus.loading,
         expensesStatus: ExpensesStatus.loading,
         expenses: null,
         currentFilter: event.filter,
       ),
     );
 
+    await Future.wait([
+      _loadSummaryWithFilter(emit, event.filter),
+      _loadExpensesWithFilter(emit, event.filter),
+    ]);
+  }
+
+  Future<void> _loadSummaryWithFilter(
+    Emitter<HomeState> emit,
+    DateFilter filter,
+  ) async {
+    try {
+      final summary = await _fetchExpensesSummary.call(filter: filter);
+
+      emit(
+        state.copyWith(
+          summaryStatus: SummaryStatus.loaded,
+          summary: summary,
+          summaryError: null,
+        ),
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(
+          summaryStatus: SummaryStatus.error,
+          summaryError: e.toString(),
+        ),
+      );
+    }
+  }
+
+  Future<void> _loadExpensesWithFilter(
+    Emitter<HomeState> emit,
+    DateFilter filter,
+  ) async {
     try {
       final filteredExpenses = await _fetchHomeExpenses.call(
         page: 1,
         pageSize: 6,
-        filter: event.filter,
+        filter: filter,
       );
 
       emit(

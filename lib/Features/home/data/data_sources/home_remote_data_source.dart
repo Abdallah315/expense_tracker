@@ -21,19 +21,19 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
   HomeRemoteDataSourceImpl(this.apiService);
   @override
   Future<ExpensesSummary> fetchExpensesSummary() async {
-    if (kUseFakeApi) {
-      await Future<void>.delayed(const Duration(seconds: 2));
-      return ExpensesSummary(
-        totalBalance: 1500,
-        totalExpenses: 900,
-        totalIncome: 2400,
-      );
-    } else {
-      final response = await apiService.get(
-        endpoint: ApiConstants.expensesSummary,
-      );
-      return ExpensesSummary.fromMap(response.data);
-    }
+    // if (kUseFakeApi) {
+    //   await Future<void>.delayed(const Duration(seconds: 2));
+    //   return ExpensesSummary(
+    //     totalBalance: 1500,
+    //     totalExpenses: 900,
+    //     totalIncome: 2400,
+    //   );
+    // } else {
+    final response = await apiService.get(
+      endpoint: ApiConstants.expensesSummary,
+    );
+    return ExpensesSummary.fromMap(response.data);
+    // }
   }
 
   @override

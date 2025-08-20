@@ -42,7 +42,7 @@ class ExpenseSummaryWidget extends StatelessWidget {
                     Text('Total Balance', style: TextStyles.font16MediumWhite),
                     verticalSpace(4),
                     Text(
-                      '\$${summary.totalBalance}',
+                      '\$${summary.totalBalance.toStringAsFixed(2)}',
                       style: TextStyles.font28BoldWhite,
                     ),
                     verticalSpace(16),
@@ -51,12 +51,13 @@ class ExpenseSummaryWidget extends StatelessWidget {
                       children: [
                         ExpenseSummaryItem(
                           title: 'Income',
-                          amount: '\$${summary.totalIncome}',
+                          amount: '\$${summary.totalIncome.toStringAsFixed(2)}',
                           icon: Icons.arrow_circle_up_outlined,
                         ),
                         ExpenseSummaryItem(
                           title: 'Expenses',
-                          amount: '\$${summary.totalExpenses}',
+                          amount:
+                              '\$${summary.totalExpenses.toStringAsFixed(2)}',
                           icon: Icons.arrow_circle_down_outlined,
                         ),
                       ],
