@@ -25,22 +25,53 @@ class AddExpenseScreen extends StatefulWidget {
 
 class _AddExpenseScreenState extends State<AddExpenseScreen> {
   late TextEditingController amountController;
-  File? imageFile;
-  File? file;
-  String? category;
-  Map<String, num>? currency;
-  DateTime? date;
-  CategoryIconData? selectedIconData;
+
+  final ValueNotifier<File?> imageFileNotifier = ValueNotifier<File?>(null);
+  final ValueNotifier<File?> fileNotifier = ValueNotifier<File?>(null);
+  final ValueNotifier<String?> categoryNotifier = ValueNotifier<String?>(null);
+  final ValueNotifier<Map<String, num>?> currencyNotifier =
+      ValueNotifier<Map<String, num>?>(null);
+  final ValueNotifier<DateTime?> dateNotifier = ValueNotifier<DateTime?>(null);
+  final ValueNotifier<CategoryIconData?> selectedIconDataNotifier =
+      ValueNotifier<CategoryIconData?>(null);
+
+  final ValueNotifier<bool> _formValidationNotifier = ValueNotifier<bool>(
+    false,
+  );
 
   @override
   void initState() {
     super.initState();
     initData();
-    amountController = TextEditingController();
+    _addListeners();
   }
 
   void initData() {
     context.read<HomeBloc>().add(const LoadCurrenciesRequested());
+  }
+
+  void _addListeners() {
+    amountController = TextEditingController();
+    amountController.addListener(_updateFormValidation);
+    imageFileNotifier.addListener(_updateFormValidation);
+    fileNotifier.addListener(_updateFormValidation);
+    categoryNotifier.addListener(_updateFormValidation);
+    currencyNotifier.addListener(_updateFormValidation);
+    dateNotifier.addListener(_updateFormValidation);
+    selectedIconDataNotifier.addListener(_updateFormValidation);
+  }
+
+  @override
+  void dispose() {
+    amountController.dispose();
+    imageFileNotifier.dispose();
+    fileNotifier.dispose();
+    categoryNotifier.dispose();
+    currencyNotifier.dispose();
+    dateNotifier.dispose();
+    selectedIconDataNotifier.dispose();
+    _formValidationNotifier.dispose();
+    super.dispose();
   }
 
   @override
@@ -57,7 +88,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
             verticalSpace(8),
             CategoriesDropDownWidget(
               onCategorySelected: (category) {
-                this.category = category;
+                categoryNotifier.value = category;
               },
             ),
             verticalSpace(16),
@@ -80,9 +111,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
             Text('Currency', style: TextStyles.font16MediumBlack),
             CurrencyDropdown(
               onCurrencySelected: (currency) {
-                setState(() {
-                  this.currency = currency;
-                });
+                currencyNotifier.value = currency;
               },
             ),
             verticalSpace(16),
@@ -91,9 +120,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
             AppDatePicker(
               hintText: '02/01/24',
               onDateSelected: (DateTime? date) {
-                setState(() {
-                  this.date = date;
-                });
+                dateNotifier.value = date;
               },
             ),
             verticalSpace(16),
@@ -101,14 +128,10 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
             verticalSpace(8),
             AppUploadOptions(
               onImageUpload: (File imageFile) {
-                setState(() {
-                  this.imageFile = imageFile;
-                });
+                imageFileNotifier.value = imageFile;
               },
               onFileUpload: (File file) {
-                setState(() {
-                  this.file = file;
-                });
+                fileNotifier.value = file;
               },
             ),
             verticalSpace(24),
@@ -116,28 +139,32 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
             verticalSpace(12),
             CategoriesIconWidget(
               onIconSelected: (CategoryIconData iconData) {
-                setState(() {
-                  selectedIconData = iconData;
-                });
+                selectedIconDataNotifier.value = iconData;
               },
             ),
             verticalSpace(32),
-            SizedBox(
-              width: double.infinity,
-              height: 52,
-              child: ElevatedButton(
-                onPressed: canSave() ? save : null,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: ColorsManager.primary,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+            // Reactive save button that listens to all form field changes
+            ValueListenableBuilder<bool>(
+              valueListenable: _formValidationNotifier,
+              builder: (context, isValid, child) {
+                return SizedBox(
+                  width: double.infinity,
+                  height: 52,
+                  child: ElevatedButton(
+                    onPressed: isValid ? save : null,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: ColorsManager.primary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: const Text(
+                      'Save',
+                      style: TextStyle(color: Colors.white, fontSize: 16),
+                    ),
                   ),
-                ),
-                child: const Text(
-                  'Save',
-                  style: TextStyle(color: Colors.white, fontSize: 16),
-                ),
-              ),
+                );
+              },
             ),
           ],
         ),
@@ -148,10 +175,10 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   bool canSave() {
     return amountController.text.isNotEmpty &&
         double.tryParse(amountController.text) != null &&
-        category != null &&
-        currency != null &&
-        date != null &&
-        selectedIconData != null;
+        categoryNotifier.value != null &&
+        currencyNotifier.value != null &&
+        dateNotifier.value != null &&
+        selectedIconDataNotifier.value != null;
   }
 
   void save() {
@@ -159,11 +186,11 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     final homeBloc = BlocProvider.of<HomeBloc>(context);
     homeBloc.add(
       SaveExpenseRequested(
-        iconData: selectedIconData!,
-        category: category!,
+        iconData: selectedIconDataNotifier.value!,
+        category: categoryNotifier.value!,
         amount: amount,
-        currency: currency!,
-        date: date!,
+        currency: currencyNotifier.value!,
+        date: dateNotifier.value!,
       ),
     );
 
@@ -175,5 +202,17 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     );
 
     context.pop();
+  }
+
+  void _updateFormValidation() {
+    final isValid =
+        amountController.text.isNotEmpty &&
+        double.tryParse(amountController.text) != null &&
+        categoryNotifier.value != null &&
+        currencyNotifier.value != null &&
+        dateNotifier.value != null &&
+        selectedIconDataNotifier.value != null;
+
+    _formValidationNotifier.value = isValid;
   }
 }
