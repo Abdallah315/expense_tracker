@@ -1,5 +1,4 @@
-import 'package:inovola_task/core/models/expense.dart';
-import 'package:inovola_task/core/models/expense_isar.dart';
+import 'package:inovola_task/Features/expenses/data/models/expense_isar.dart';
 import 'package:inovola_task/Features/home/data/models/expenses_summary_isar.dart';
 import 'package:inovola_task/Features/home/domain/entities/expenses_summay_entity.dart';
 import 'package:inovola_task/Features/home/enums/home_enums.dart';
@@ -12,11 +11,8 @@ abstract class HomeLocalDataSource {
   });
   Future<void> saveExpensesSummary(ExpensesSummaryEntity expensesSummary);
   Future<List<ExpenseIsar>> fetchHomeExpenses({
-    int offset = 0,
-    int limit = 10,
     DateFilter filter = DateFilter.all,
   });
-  Future<void> saveExpenses(List<Expense> expenses);
 }
 
 class HomeLocalDataSourceImpl extends HomeLocalDataSource {
@@ -52,39 +48,6 @@ class HomeLocalDataSourceImpl extends HomeLocalDataSource {
     );
   }
 
-  Future<List<ExpenseIsar>> _getFilteredExpenses(
-    Isar isar,
-    DateFilter filter,
-  ) async {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-
-    switch (filter) {
-      case DateFilter.all:
-        return await isar.expenseIsars.where().sortByDateDesc().findAll();
-
-      case DateFilter.thisMonth:
-        final startOfMonth = DateTime(now.year, now.month, 1);
-        final endOfMonth = DateTime(now.year, now.month + 1);
-
-        return await isar.expenseIsars
-            .filter()
-            .dateBetween(startOfMonth, endOfMonth)
-            .sortByDateDesc()
-            .findAll();
-
-      case DateFilter.lastSevenDays:
-        final sevenDaysAgo = today.subtract(const Duration(days: 7));
-        final endOfDay = DateTime(today.year, today.month, today.day);
-
-        return await isar.expenseIsars
-            .filter()
-            .dateBetween(sevenDaysAgo, endOfDay)
-            .sortByDateDesc()
-            .findAll();
-    }
-  }
-
   @override
   Future<void> saveExpensesSummary(
     ExpensesSummaryEntity expensesSummary,
@@ -99,32 +62,51 @@ class HomeLocalDataSourceImpl extends HomeLocalDataSource {
 
   @override
   Future<List<ExpenseIsar>> fetchHomeExpenses({
-    int offset = 0,
-    int limit = 10,
     DateFilter filter = DateFilter.all,
   }) async {
     final isar = await AppDatabase.isar;
 
     final filteredExpenses = await _getFilteredExpenses(isar, filter);
 
-    final startIndex = offset;
-    final endIndex = offset + limit;
-
-    if (startIndex >= filteredExpenses.length) {
-      return [];
-    }
-
-    return filteredExpenses.skip(startIndex).take(limit).toList();
+    return filteredExpenses;
   }
 
-  @override
-  Future<void> saveExpenses(List<Expense> expenses) async {
-    final isar = await AppDatabase.isar;
-    await isar.writeTxn(() async {
-      final isarExpenses = expenses
-          .map((e) => ExpenseIsar.fromModel(e))
-          .toList();
-      await isar.expenseIsars.putAll(isarExpenses);
-    });
+  Future<List<ExpenseIsar>> _getFilteredExpenses(
+    Isar isar,
+    DateFilter filter,
+  ) async {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+
+    switch (filter) {
+      case DateFilter.all:
+        return await isar.expenseIsars
+            .where()
+            .sortByDateDesc()
+            .limit(6)
+            .findAll();
+
+      case DateFilter.thisMonth:
+        final startOfMonth = DateTime(now.year, now.month, 1);
+        final endOfMonth = DateTime(now.year, now.month + 1);
+
+        return await isar.expenseIsars
+            .filter()
+            .dateBetween(startOfMonth, endOfMonth)
+            .sortByDateDesc()
+            .limit(6)
+            .findAll();
+
+      case DateFilter.lastSevenDays:
+        final sevenDaysAgo = today.subtract(const Duration(days: 7));
+        final endOfDay = DateTime(today.year, today.month, today.day);
+
+        return await isar.expenseIsars
+            .filter()
+            .dateBetween(sevenDaysAgo, endOfDay)
+            .sortByDateDesc()
+            .limit(6)
+            .findAll();
+    }
   }
 }

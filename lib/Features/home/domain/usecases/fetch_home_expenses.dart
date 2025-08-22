@@ -7,16 +7,7 @@ class FetchHomeExpenses {
 
   FetchHomeExpenses(this._repository);
 
-  Future<List<ExpenseEntity>> call({
-    int page = 1,
-    int pageSize = 10,
-    DateFilter filter = DateFilter.all,
-  }) async {
-    // ✅ Pass filter to repository for efficient database/API filtering
-    return await _repository.fetchHomeExpenses(
-      page: page,
-      pageSize: pageSize,
-      filter: filter,
-    );
+  Future<List<ExpenseEntity>> call({DateFilter filter = DateFilter.all}) async {
+    return await _repository.fetchHomeExpenses(filter: filter);
   }
 }

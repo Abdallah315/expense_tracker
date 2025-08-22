@@ -1,7 +1,7 @@
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:inovola_task/Features/home/data/models/expenses_summary_isar.dart';
-import 'package:inovola_task/core/models/expense_isar.dart';
+import 'package:inovola_task/Features/expenses/data/models/expense_isar.dart';
 
 class AppDatabase {
   AppDatabase._();

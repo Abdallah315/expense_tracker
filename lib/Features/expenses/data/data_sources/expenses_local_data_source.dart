@@ -1,6 +1,6 @@
 import 'package:inovola_task/core/database/app_database.dart';
 import 'package:inovola_task/core/models/expense.dart';
-import 'package:inovola_task/core/models/expense_isar.dart';
+import 'package:inovola_task/Features/expenses/data/models/expense_isar.dart';
 import 'package:isar/isar.dart';
 
 abstract class ExpensesLocalDataSource {

@@ -58,7 +58,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   Future<void> _loadInitialExpenses(Emitter<HomeState> emit) async {
     try {
-      final expenses = await _fetchHomeExpenses.call(page: 1, pageSize: 6);
+      final expenses = await _fetchHomeExpenses.call();
 
       emit(
         state.copyWith(
@@ -125,11 +125,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     DateFilter filter,
   ) async {
     try {
-      final filteredExpenses = await _fetchHomeExpenses.call(
-        page: 1,
-        pageSize: 6,
-        filter: filter,
-      );
+      final filteredExpenses = await _fetchHomeExpenses.call(filter: filter);
 
       emit(
         state.copyWith(

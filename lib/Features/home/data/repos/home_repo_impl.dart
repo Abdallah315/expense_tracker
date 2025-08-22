@@ -40,33 +40,20 @@ class HomeRepoImpl implements HomeRepo {
 
   @override
   Future<List<ExpenseEntity>> fetchHomeExpenses({
-    int page = 1,
-    int pageSize = 6,
     DateFilter filter = DateFilter.all,
   }) async {
     try {
-      final offset = (page - 1) * pageSize;
-
       final cachedExpenses = await homeLocalDataSource.fetchHomeExpenses(
-        offset: offset,
-        limit: pageSize,
         filter: filter,
       );
 
       if (cachedExpenses.isNotEmpty) {
-        log(
-          'cachedExpenses for page $page with filter $filter: ${cachedExpenses.length} items',
-        );
         return cachedExpenses.map((model) => model.toEntity()).toList();
       }
 
       final remoteExpenses = await homeRemoteDataSource.fetchExpenses(
-        page: page,
-        pageSize: pageSize,
         filter: filter,
       );
-
-      await homeLocalDataSource.saveExpenses(remoteExpenses);
 
       return remoteExpenses.map((model) => model.toEntity()).toList();
     } catch (e) {

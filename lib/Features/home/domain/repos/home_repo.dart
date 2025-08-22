@@ -7,8 +7,6 @@ abstract class HomeRepo {
     DateFilter filter = DateFilter.all,
   });
   Future<List<ExpenseEntity>> fetchHomeExpenses({
-    int page = 1,
-    int pageSize = 10,
     DateFilter filter = DateFilter.all,
   });
 }
