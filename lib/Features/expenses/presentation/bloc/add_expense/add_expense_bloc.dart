@@ -3,6 +3,7 @@ import 'package:inovola_task/Features/expenses/domain/usecases/fetch_currencies.
 import 'package:inovola_task/Features/expenses/domain/usecases/save_expense.dart';
 import 'package:inovola_task/Features/expenses/presentation/bloc/add_expense/add_expense_event.dart';
 import 'package:inovola_task/Features/expenses/presentation/bloc/add_expense/add_expense_state.dart';
+import 'package:inovola_task/core/utils/expense_validator.dart';
 
 class AddExpenseBloc extends Bloc<AddExpenseEvent, AddExpenseState> {
   final FetchCurrencies _fetchCurrencies;
@@ -67,13 +68,13 @@ class AddExpenseBloc extends Bloc<AddExpenseEvent, AddExpenseState> {
   }
 
   void _onValidateForm(ValidateForm event, Emitter<AddExpenseState> emit) {
-    final isValid =
-        state.amountController.text.isNotEmpty &&
-        double.tryParse(state.amountController.text) != null &&
-        state.category != null &&
-        state.currency != null &&
-        state.date != null &&
-        state.selectedIconData != null;
+    final isValid = ExpenseValidator.isFormValid(
+      amount: state.amountController.text,
+      category: state.category ?? '',
+      currency: state.currency ?? {},
+      date: state.date,
+      iconData: state.selectedIconData,
+    );
 
     emit(state.copyWith(isFormValid: isValid));
   }

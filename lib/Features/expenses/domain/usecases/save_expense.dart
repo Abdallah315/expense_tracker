@@ -2,6 +2,7 @@ import 'package:inovola_task/Features/expenses/domain/repos/expenses_repo.dart';
 import 'package:inovola_task/core/entities/expense_entity.dart';
 import 'package:inovola_task/core/helpers/enums.dart';
 import 'package:inovola_task/core/helpers/icon_helper.dart';
+import 'package:inovola_task/core/utils/currency_calculator.dart';
 
 class SaveExpense {
   final ExpensesRepo _repository;
@@ -21,7 +22,10 @@ class SaveExpense {
     );
 
     final exchangeRate = currency.values.firstOrNull ?? 1.0;
-    final amountInUSD = amount / exchangeRate;
+    final amountInUSD = CurrencyCalculator.convertToUSD(
+      amount,
+      exchangeRate.toDouble(),
+    );
 
     final expense = ExpenseEntity(
       // we could use the id from the api but we want to use the local id for now, we've removed the id from the expense model toMap method
