@@ -110,14 +110,13 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
             BlocBuilder<AddExpenseBloc, AddExpenseState>(
               buildWhen: (previous, current) =>
                   previous.isFormValid != current.isFormValid,
-              bloc: addExpenseBloc,
               builder: (context, state) {
                 final isValid = state.isFormValid;
                 return SizedBox(
                   width: double.infinity,
                   height: 52,
                   child: ElevatedButton(
-                    onPressed: isValid ? () => save(addExpenseBloc) : null,
+                    onPressed: isValid ? () => save() : null,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: ColorsManager.primary,
                       shape: RoundedRectangleBorder(
@@ -138,11 +137,8 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     );
   }
 
-  void save(AddExpenseBloc formCubit) {
-    final formData = formCubit.state.getFormData();
-    if (formData == null) return;
-
-    final addExpenseBloc = BlocProvider.of<AddExpenseBloc>(context);
+  void save() {
+    final addExpenseBloc = context.read<AddExpenseBloc>();
     addExpenseBloc.add(SaveExpenseRequested());
 
     context.pop(true);

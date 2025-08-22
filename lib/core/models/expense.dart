@@ -54,7 +54,6 @@ class Expense {
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'id': id,
       'type': type,
       'category': category.name,
       'amount': amount,

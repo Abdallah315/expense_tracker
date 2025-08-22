@@ -24,6 +24,7 @@ class SaveExpense {
     final amountInUSD = amount / exchangeRate;
 
     final expense = ExpenseEntity(
+      // we could use the id from the api but we want to use the local id for now, we've removed the id from the expense model toMap method
       id: DateTime.now().millisecondsSinceEpoch,
       type: 'expense',
       iconData: iconData,
