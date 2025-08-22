@@ -30,16 +30,16 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
     context.read<ExpensesBloc>().add(const LoadFullExpensesRequested());
   }
 
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
-  }
-
   void _onScroll() {
     if (_isBottom) {
       context.read<ExpensesBloc>().add(const LoadMoreExpensesRequested());
     }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   bool get _isBottom {
@@ -62,7 +62,8 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
         buildWhen: (previous, current) =>
             previous.expensesStatus != current.expensesStatus ||
             previous.expenses != current.expenses ||
-            previous.hasMoreExpenses != current.hasMoreExpenses,
+            previous.hasMoreExpenses != current.hasMoreExpenses ||
+            previous.expensesError != current.expensesError,
         builder: (context, state) {
           switch (state.expensesStatus) {
             case ExpensesStatus.initial:

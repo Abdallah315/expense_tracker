@@ -27,7 +27,8 @@ class ExpenseSummaryWidget extends StatelessWidget {
         child: BlocBuilder<HomeBloc, HomeState>(
           buildWhen: (previous, current) =>
               previous.summaryStatus != current.summaryStatus ||
-              previous.summary != current.summary,
+              previous.summary != current.summary ||
+              previous.summaryError != current.summaryError,
           builder: (context, state) {
             switch (state.summaryStatus) {
               case ExpenseSummaryStatus.initial:

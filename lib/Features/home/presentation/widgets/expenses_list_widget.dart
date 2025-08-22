@@ -15,7 +15,8 @@ class ExpensesListWidget extends StatelessWidget {
       buildWhen: (previous, current) =>
           previous.expensesStatus != current.expensesStatus ||
           previous.expenses != current.expenses ||
-          previous.currentFilter != current.currentFilter,
+          previous.currentFilter != current.currentFilter ||
+          previous.expensesError != current.expensesError,
       builder: (context, state) {
         switch (state.expensesStatus) {
           case ExpensesStatus.initial:
