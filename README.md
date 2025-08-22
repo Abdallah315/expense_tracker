@@ -14,6 +14,6 @@ Core structure features:
 
 <img width="375" height="812" alt="Simulator Screenshot - iPhone 16 - 2025-08-21 at 02 51 33" src="https://github.com/user-attachments/assets/5510286b-d507-421f-b657-8fc3c708ca65" />
 
-<img width="548" height="445" alt="image" src="https://github.com/user-attachments/assets/579f5ffa-8105-47a0-8a70-16f3bfcd0fb3" />
+<img width="375" height="445" alt="image" src="https://github.com/user-attachments/assets/579f5ffa-8105-47a0-8a70-16f3bfcd0fb3" />
 
-<img width="514" height="134" alt="image" src="https://github.com/user-attachments/assets/124d0ae2-9909-4131-ac95-44b20fa3163e" />
+<img width="375" height="445" alt="image" src="https://github.com/user-attachments/assets/124d0ae2-9909-4131-ac95-44b20fa3163e" />
