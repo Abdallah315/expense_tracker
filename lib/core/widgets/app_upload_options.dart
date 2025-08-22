@@ -3,6 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:inovola_task/core/di/dependency_injection.dart';
+import 'package:inovola_task/core/services/pickers.dart';
 import 'package:inovola_task/core/theming/colors.dart';
 import 'package:inovola_task/core/theming/styles.dart';
 import 'dart:io';
@@ -72,7 +74,8 @@ class AppUploadOptions extends StatelessWidget {
               subtitle: 'Choose a document or file',
               onTap: () {
                 context.pop();
-                _pickFile();
+                final pickersService = getIt<PickersService>();
+                pickersService.pickFile();
               },
             ),
             SizedBox(height: 20.h),
@@ -131,7 +134,8 @@ class AppUploadOptions extends StatelessWidget {
               subtitle: 'Take a new photo',
               onTap: () {
                 context.pop();
-                _pickImage(ImageSource.camera);
+                final pickersService = getIt<PickersService>();
+                pickersService.pickImage(ImageSource.camera);
               },
             ),
             SizedBox(height: 16.h),
@@ -141,7 +145,8 @@ class AppUploadOptions extends StatelessWidget {
               subtitle: 'Choose from gallery',
               onTap: () {
                 context.pop();
-                _pickImage(ImageSource.gallery);
+                final pickersService = getIt<PickersService>();
+                pickersService.pickImage(ImageSource.gallery);
               },
             ),
             SizedBox(height: 20.h),
@@ -165,42 +170,6 @@ class AppUploadOptions extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  Future<void> _pickImage(ImageSource source) async {
-    try {
-      final ImagePicker picker = ImagePicker();
-      final XFile? image = await picker.pickImage(
-        source: source,
-        maxWidth: 1920,
-        maxHeight: 1080,
-        imageQuality: 85,
-      );
-
-      if (image != null) {
-        final File imageFile = File(image.path);
-        onImageUpload?.call(imageFile);
-      }
-    } catch (e) {
-      debugPrint('Error picking image: $e');
-    }
-  }
-
-  Future<void> _pickFile() async {
-    try {
-      FilePickerResult? result = await FilePicker.platform.pickFiles(
-        type: FileType.custom,
-        allowedExtensions: ['pdf', 'doc', 'docx', 'txt', 'jpg', 'jpeg', 'png'],
-        allowMultiple: false,
-      );
-
-      if (result != null && result.files.single.path != null) {
-        final File file = File(result.files.single.path!);
-        onFileUpload?.call(file);
-      }
-    } catch (e) {
-      debugPrint('Error picking file: $e');
-    }
   }
 }
 

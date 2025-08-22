@@ -16,6 +16,7 @@ import 'package:inovola_task/Features/home/data/repos/home_repo_impl.dart';
 import 'package:inovola_task/Features/home/domain/repos/home_repo.dart';
 import 'package:inovola_task/Features/home/domain/usecases/fetch_expenses_summary.dart';
 import 'package:inovola_task/Features/home/domain/usecases/fetch_home_expenses.dart';
+import 'package:inovola_task/core/services/pickers.dart';
 
 final getIt = GetIt.instance;
 
@@ -84,4 +85,6 @@ Future<void> setupGetIt() async {
       saveExpense: getIt<SaveExpense>(),
     ),
   );
+
+  getIt.registerLazySingleton<PickersService>(() => PickersServiceImpl());
 }
