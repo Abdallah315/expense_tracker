@@ -25,6 +25,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   void initData() {
+    // we could load the data in th router while providing the bloc to the router but we want the route to be more simple and clean
     context.read<HomeBloc>().add(const LoadHomeDataRequested());
   }
 

@@ -1,4 +1,3 @@
-
 import 'package:inovola_task/Features/home/data/data_sources/home_local_data_source.dart';
 import 'package:inovola_task/Features/home/data/data_sources/home_remote_data_source.dart';
 import 'package:inovola_task/Features/home/domain/entities/expenses_summay_entity.dart';
@@ -24,14 +23,13 @@ class HomeRepoImpl implements HomeRepo {
       final cachedExpensesSummary = await homeLocalDataSource
           .fetchExpensesSummary(filter: filter);
       if (cachedExpensesSummary != null) {
-        return cachedExpensesSummary;
+        return cachedExpensesSummary.toEntity();
       }
 
       final remoteExpensesSummary = await homeRemoteDataSource
           .fetchExpensesSummary();
-      final entity = remoteExpensesSummary.toEntity();
-      await homeLocalDataSource.saveExpensesSummary(entity);
-      return entity;
+      await homeLocalDataSource.saveExpensesSummary(remoteExpensesSummary);
+      return remoteExpensesSummary.toEntity();
     } catch (e) {
       throw ServerFailure(e.toString());
     }

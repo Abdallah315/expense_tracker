@@ -25,7 +25,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   ) async {
     emit(
       state.copyWith(
-        summaryStatus: SummaryStatus.loading,
+        summaryStatus: ExpenseSummaryStatus.loading,
         expensesStatus: ExpensesStatus.loading,
       ),
     );
@@ -41,7 +41,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
       emit(
         state.copyWith(
-          summaryStatus: SummaryStatus.loaded,
+          summaryStatus: ExpenseSummaryStatus.loaded,
           summary: summary,
           summaryError: null,
         ),
@@ -49,7 +49,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     } catch (e) {
       emit(
         state.copyWith(
-          summaryStatus: SummaryStatus.error,
+          summaryStatus: ExpenseSummaryStatus.error,
           summaryError: e.toString(),
         ),
       );
@@ -83,7 +83,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   ) async {
     emit(
       state.copyWith(
-        summaryStatus: SummaryStatus.loading,
+        summaryStatus: ExpenseSummaryStatus.loading,
         expensesStatus: ExpensesStatus.loading,
         expenses: null,
         currentFilter: event.filter,
@@ -105,7 +105,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
       emit(
         state.copyWith(
-          summaryStatus: SummaryStatus.loaded,
+          summaryStatus: ExpenseSummaryStatus.loaded,
           summary: summary,
           summaryError: null,
         ),
@@ -113,7 +113,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     } catch (e) {
       emit(
         state.copyWith(
-          summaryStatus: SummaryStatus.error,
+          summaryStatus: ExpenseSummaryStatus.error,
           summaryError: e.toString(),
         ),
       );

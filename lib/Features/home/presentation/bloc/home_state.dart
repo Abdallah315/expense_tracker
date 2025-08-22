@@ -3,12 +3,12 @@ import 'package:inovola_task/Features/home/domain/entities/expenses_summay_entit
 import 'package:inovola_task/Features/home/enums/home_enums.dart';
 import 'package:inovola_task/core/entities/expense_entity.dart';
 
-enum SummaryStatus { initial, loading, loaded, error }
+enum ExpenseSummaryStatus { initial, loading, loaded, error }
 
 enum ExpensesStatus { initial, loading, loaded, error }
 
 class HomeState extends Equatable {
-  final SummaryStatus summaryStatus;
+  final ExpenseSummaryStatus summaryStatus;
   final ExpensesStatus expensesStatus;
 
   final ExpensesSummaryEntity? summary;
@@ -20,7 +20,7 @@ class HomeState extends Equatable {
   final String? expensesError;
 
   const HomeState({
-    this.summaryStatus = SummaryStatus.initial,
+    this.summaryStatus = ExpenseSummaryStatus.initial,
     this.expensesStatus = ExpensesStatus.initial,
     this.summary,
     this.expenses,
@@ -32,7 +32,7 @@ class HomeState extends Equatable {
   const HomeState.initial() : this();
 
   HomeState copyWith({
-    SummaryStatus? summaryStatus,
+    ExpenseSummaryStatus? summaryStatus,
     ExpensesStatus? expensesStatus,
     ExpensesSummaryEntity? summary,
     List<ExpenseEntity>? expenses,

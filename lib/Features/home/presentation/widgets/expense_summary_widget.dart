@@ -30,11 +30,11 @@ class ExpenseSummaryWidget extends StatelessWidget {
               previous.summary != current.summary,
           builder: (context, state) {
             switch (state.summaryStatus) {
-              case SummaryStatus.initial:
-              case SummaryStatus.loading:
+              case ExpenseSummaryStatus.initial:
+              case ExpenseSummaryStatus.loading:
                 return const Loader();
 
-              case SummaryStatus.loaded:
+              case ExpenseSummaryStatus.loaded:
                 final summary = state.summary!;
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -65,7 +65,7 @@ class ExpenseSummaryWidget extends StatelessWidget {
                   ],
                 );
 
-              case SummaryStatus.error:
+              case ExpenseSummaryStatus.error:
                 return CustomErrorWidget(
                   error: state.summaryError ?? 'Something went wrong',
                 );

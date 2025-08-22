@@ -1,15 +1,15 @@
 import 'package:inovola_task/Features/expenses/data/models/expense_isar.dart';
+import 'package:inovola_task/Features/home/data/models/expenses_summary.dart';
 import 'package:inovola_task/Features/home/data/models/expenses_summary_isar.dart';
-import 'package:inovola_task/Features/home/domain/entities/expenses_summay_entity.dart';
 import 'package:inovola_task/Features/home/enums/home_enums.dart';
 import 'package:inovola_task/core/database/app_database.dart';
 import 'package:isar/isar.dart';
 
 abstract class HomeLocalDataSource {
-  Future<ExpensesSummaryEntity?> fetchExpensesSummary({
+  Future<ExpensesSummary?> fetchExpensesSummary({
     DateFilter filter = DateFilter.all,
   });
-  Future<void> saveExpensesSummary(ExpensesSummaryEntity expensesSummary);
+  Future<void> saveExpensesSummary(ExpensesSummary expensesSummary);
   Future<List<ExpenseIsar>> fetchHomeExpenses({
     DateFilter filter = DateFilter.all,
   });
@@ -17,7 +17,7 @@ abstract class HomeLocalDataSource {
 
 class HomeLocalDataSourceImpl extends HomeLocalDataSource {
   @override
-  Future<ExpensesSummaryEntity?> fetchExpensesSummary({
+  Future<ExpensesSummary?> fetchExpensesSummary({
     DateFilter filter = DateFilter.all,
   }) async {
     final isar = await AppDatabase.isar;
@@ -41,7 +41,7 @@ class HomeLocalDataSourceImpl extends HomeLocalDataSource {
 
     final totalBalance = totalIncome - totalExpenses;
 
-    return ExpensesSummaryEntity(
+    return ExpensesSummary(
       totalBalance: totalBalance,
       totalExpenses: totalExpenses,
       totalIncome: totalIncome,
@@ -49,13 +49,11 @@ class HomeLocalDataSourceImpl extends HomeLocalDataSource {
   }
 
   @override
-  Future<void> saveExpensesSummary(
-    ExpensesSummaryEntity expensesSummary,
-  ) async {
+  Future<void> saveExpensesSummary(ExpensesSummary expensesSummary) async {
     final isar = await AppDatabase.isar;
     await isar.writeTxn(() async {
       await isar.expensesSummaryIsars.put(
-        ExpensesSummaryIsar.fromEntity(expensesSummary),
+        ExpensesSummaryIsar.fromModel(expensesSummary),
       );
     });
   }
